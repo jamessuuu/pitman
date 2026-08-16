@@ -17,7 +17,7 @@
     "dev": "pnpm --filter ./apps/web run dev",
     "build:web": "pnpm --filter ./apps/web run build",
     "build": "pnpm run brand && pnpm run build:web",
-    "e2e:smoke": "pnpm --filter ./apps/web run e2e -- --grep @smoke",
+    "e2e:smoke": "pnpm --filter ./apps/web run e2e --grep @smoke",
     "e2e:full": "pnpm --filter ./apps/web run e2e",
     "ci": "pnpm run typecheck && pnpm run lint && pnpm run unit && pnpm run build && pnpm run e2e:full"
   },

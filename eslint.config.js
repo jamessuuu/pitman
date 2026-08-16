@@ -14,12 +14,17 @@ export default tseslint.config(
       "**/playwright-report/**",
       "**/test-results/**",
       "**/.turbo/**",
+      // Static assets, not source. apps/web/public/ort/ is third-party
+      // (onnxruntime-web runtime, copied by scripts/copy-ort-assets.mjs;
+      // gitignored) and apps/web/public/brand/ will hold generated
+      // favicon/OG assets from M5.
+      "apps/web/public/**",
     ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ["packages/**/*.ts", "**/*.config.ts", "**/*.config.js"],
+    files: ["packages/**/*.ts", "**/*.config.ts", "**/*.config.js", "scripts/**/*.mjs"],
     languageOptions: {
       globals: { ...globals.node },
     },

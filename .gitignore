@@ -1,5 +1,9 @@
 node_modules/
 .pnpm-store/
+
+# Unrelated tooling/plugin debris observed in this working tree (not part
+# of pitman) — ignored so it never gets committed by accident.
+.firm-pro/
 dist/
 out/
 build/
@@ -18,3 +22,9 @@ test-results/
 # Model weights are fetched from the Hugging Face CDN at runtime by the
 # browser, never vendored into the repo or the build.
 /apps/web/public/models/
+
+# onnxruntime-web's own WASM runtime, copied from node_modules at
+# dev/build time (scripts/copy-ort-assets.mjs) so it serves same-origin
+# instead of onnxruntime-web's default jsdelivr CDN fetch. A large binary
+# derived from node_modules, not source — never vendored into the repo.
+/apps/web/public/ort/

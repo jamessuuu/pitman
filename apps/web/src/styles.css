@@ -143,6 +143,76 @@ code {
   font-size: 0.9em;
 }
 
+.dropzone {
+  border: 2px dashed var(--border);
+  border-radius: 0.5rem;
+  padding: 2rem 1.25rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.dropzone-active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.dropzone label {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: var(--fg-muted);
+}
+
+.dropzone input[type="file"] {
+  max-width: 100%;
+}
+
+.error-note {
+  color: #b3261e;
+  border-left: 3px solid #b3261e;
+  padding-left: 0.875rem;
+  font-size: 0.9375rem;
+  margin: 1rem 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .error-note {
+    color: #ffb4ab;
+    border-left-color: #ffb4ab;
+  }
+}
+
+.transcript {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.model-panel {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.75rem 1.5rem;
+}
+
+.model-panel dt {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  margin: 0;
+}
+
+.model-panel dd {
+  margin: 0.15rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
