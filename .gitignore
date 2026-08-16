@@ -27,3 +27,5 @@ test-results/
 # instead of onnxruntime-web's default jsdelivr CDN fetch. A large binary
 # derived from node_modules, not source — never vendored into the repo.
 /apps/web/public/ort/
+
+.vercel
