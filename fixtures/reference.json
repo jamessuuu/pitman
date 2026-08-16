@@ -1,0 +1,65 @@
+{
+  "provenance": {
+    "source": "Mozilla Common Voice English v22.0 via fsicoli/common_voice_22_0 (Hugging Face mirror)",
+    "license": "CC0-1.0",
+    "probeDoc": "docs/batch2-asr-probe.md",
+    "probeGeneratedAt": "2026-08-15T16:39:08.017Z",
+    "measuredWith": "@huggingface/transformers on Node.js (onnxruntime-node), NOT a browser measurement"
+  },
+  "clips": [
+    {
+      "id": "common_voice_en_187059",
+      "file": "common_voice_en_187059.mp3",
+      "reference": "Young boy running outside on the pavement.",
+      "refWordCount": 7,
+      "evidenceClass": "none",
+      "note": "Perfect transcription in all 4 probe runs — the majority case, not the tail.",
+      "probe": {
+        "tiny.en": {
+          "fp32": { "hypothesis": "Young boy running outside on the pavement.", "wer": 0, "substitutions": 0, "deletions": 0, "insertions": 0 },
+          "q8":   { "hypothesis": "Young boy running outside on the pavement.", "wer": 0, "substitutions": 0, "deletions": 0, "insertions": 0 }
+        },
+        "base.en": {
+          "fp32": { "hypothesis": "Young boy running outside on the pavement.", "wer": 0, "substitutions": 0, "deletions": 0, "insertions": 0 },
+          "q8":   { "hypothesis": "Young boy running outside on the pavement.", "wer": 0, "substitutions": 0, "deletions": 0, "insertions": 0 }
+        }
+      }
+    },
+    {
+      "id": "common_voice_en_187061",
+      "file": "common_voice_en_187061.mp3",
+      "reference": "Muzzled greyhounds are racing along a dog track.",
+      "refWordCount": 8,
+      "evidenceClass": "B",
+      "note": "track -> truck: recurring, phonetically-grounded confusion (probe SS6 bucket B), 2 speakers, both models, absent from the probe's US-accent control group.",
+      "probe": {
+        "tiny.en": {
+          "fp32": { "hypothesis": "My soul preheans are racing along a dog truck.", "wer": 0.5, "substitutions": 3, "deletions": 0, "insertions": 1 },
+          "q8":   { "hypothesis": "My so pretty homes are racing along a dog truck.", "wer": 0.625, "substitutions": 3, "deletions": 0, "insertions": 2 }
+        },
+        "base.en": {
+          "fp32": { "hypothesis": "My soul pre-honed sorry seeing a long a dog truck.", "wer": 1.125, "substitutions": 6, "deletions": 0, "insertions": 3 },
+          "q8":   { "hypothesis": "My soul pre-hounds are racing along a dog truck.", "wer": 0.625, "substitutions": 3, "deletions": 0, "insertions": 2 }
+        }
+      }
+    },
+    {
+      "id": "common_voice_en_38102497",
+      "file": "common_voice_en_38102497.mp3",
+      "reference": "The current president is Pavel Cebanu.",
+      "refWordCount": 6,
+      "evidenceClass": "A",
+      "note": "Cebanu -> Sebano/Cebano: rare-surname OOV miss (probe SS6 bucket A). The probe's control group broke on equally rare non-Filipino names the same way (Vlachos -> Blachel), which is why this class is never framed as accent-related.",
+      "probe": {
+        "tiny.en": {
+          "fp32": { "hypothesis": "The current president is Pavel Sebano.", "wer": 0.16666666666666666, "substitutions": 1, "deletions": 0, "insertions": 0 },
+          "q8":   { "hypothesis": "The current president is Pavel Sebanov.", "wer": 0.16666666666666666, "substitutions": 1, "deletions": 0, "insertions": 0 }
+        },
+        "base.en": {
+          "fp32": { "hypothesis": "The current president is Pavel Cebano.", "wer": 0.16666666666666666, "substitutions": 1, "deletions": 0, "insertions": 0 },
+          "q8":   { "hypothesis": "The current president is Pavel Cebano.", "wer": 0.16666666666666666, "substitutions": 1, "deletions": 0, "insertions": 0 }
+        }
+      }
+    }
+  ]
+}

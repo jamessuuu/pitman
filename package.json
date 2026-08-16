@@ -1,0 +1,34 @@
+{
+  "name": "pitman",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shows exactly what a browser speech model heard on your speech — full transcript, per-word confidence, the diff against what you meant to say — entirely on-device.",
+  "packageManager": "pnpm@9.15.4",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "pnpm -r --if-present run typecheck",
+    "lint": "eslint .",
+    "unit": "vitest run",
+    "unit:watch": "vitest",
+    "brand": "node scripts/brand.mjs",
+    "dev": "pnpm --filter ./apps/web run dev",
+    "build:web": "pnpm --filter ./apps/web run build",
+    "build": "pnpm run brand && pnpm run build:web",
+    "e2e:smoke": "pnpm --filter ./apps/web run e2e -- --grep @smoke",
+    "e2e:full": "pnpm --filter ./apps/web run e2e",
+    "ci": "pnpm run typecheck && pnpm run lint && pnpm run unit && pnpm run build && pnpm run e2e:full"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "eslint": "^9.20.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.4",
+    "globals": "^17.11.0",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.23.0",
+    "vitest": "^3.2.4"
+  }
+}

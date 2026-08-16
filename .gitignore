@@ -1,0 +1,20 @@
+node_modules/
+.pnpm-store/
+dist/
+out/
+build/
+/coverage/
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example
+playwright-report/
+test-results/
+.turbo/
+*.tsbuildinfo
+
+# Model weights are fetched from the Hugging Face CDN at runtime by the
+# browser, never vendored into the repo or the build.
+/apps/web/public/models/
