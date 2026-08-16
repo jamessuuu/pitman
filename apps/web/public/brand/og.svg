@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#17140f"/>
+
+  <!-- mark -->
+  <rect x="90" y="235" width="160" height="160" rx="32" fill="#7a4023"/>
+  <g fill="none" stroke="#fbf6ef" stroke-width="20" stroke-linecap="round">
+    <line x1="147" y1="278" x2="147" y2="358"/>
+    <circle cx="188" cy="315" r="27"/>
+  </g>
+
+  <text x="300" y="330" font-family="Segoe UI, Arial, sans-serif" font-size="88" font-weight="700" fill="#f2efe9">pitman</text>
+
+  <text x="300" y="392" font-family="Segoe UI, Arial, sans-serif" font-size="30" fill="#b8b2a4">
+    See exactly what the model heard.
+  </text>
+
+  <text x="90" y="500" font-family="Segoe UI, Arial, sans-serif" font-size="26" fill="#d78c5f">
+    on-device — nothing leaves your browser
+  </text>
+  <text x="90" y="545" font-family="Segoe UI, Arial, sans-serif" font-size="24" fill="#b8b2a4">
+    Full transcript, per-word confidence, and a diff against what you meant to say.
+  </text>
+  <text x="90" y="580" font-family="Segoe UI, Arial, sans-serif" font-size="22" fill="#7a7364">
+    Built on a measured probe of real speech — not a guess. See /method.
+  </text>
+</svg>

@@ -108,7 +108,30 @@ against outright breakage (WER ≤ 0.75) and logs both numbers for the
 record. This divergence is real, disclosed content for `/docs/limitations`
 (M5), not a defect masked by a loosened test.
 
-**## M3 — confidence data doesn't exist in transformers.js's public API; recovered via a teacher-forcing pass
+**## M5 — brand assets (favicon/OG), scripts/brand.mjs finished
+
+`scripts/brand.mjs` (M0's presence-check stub) is now the real thing: it
+requires `favicon.svg` / `favicon-32.png` / `og.png` to exist, then
+rasterizes the favicon at 16px (via `sharp`, added as a root
+devDependency) and checks glyph-pixel coverage against a near-blank
+threshold — a mechanical regression guard for BATCH-2-STANDARDS.md's
+"favicon VERIFIED BY RASTERIZING AT 16px AND LOOKING" requirement. The
+"and looking" part was a real manual visual check during this session
+(favicon rasterized to 16px, then nearest-neighbor-upscaled to 256px and
+inspected directly — a bold cream "p" mark, closed bowl + stem, on a warm
+brown badge — clearly legible, no mush at tab size); the script is what
+keeps that from silently regressing on a later logo change.
+
+Assets are hand-authored SVG (`apps/web/public/brand/favicon.svg`,
+`og.svg`), not AI-generated images — deliberately simple geometry (thick
+strokes, no fine detail) specifically so they hold up at 16px, and
+avoiding the house style's banned generic-AI-UI tells (no gradient blobs,
+no side-tab accent borders). `og.png` is 1200×630, rasterized from
+`og.svg` at build time via the same `sharp` dependency; both were visually
+reviewed as rendered PNGs before being wired into `index.html`
+(`<link rel="icon">` + `og:image`).
+
+## M3 — confidence data doesn't exist in transformers.js's public API; recovered via a teacher-forcing pass
 
 docs/pitman-SPEC.md Surfaces §1 requires "per-word confidence visualization."
 transformers.js's `pipeline()` for ASR never provides this, at any settings:

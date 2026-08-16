@@ -122,10 +122,66 @@ button {
   margin: 0 0 1rem;
 }
 
+.page-wide {
+  max-width: 46rem;
+}
+
+.page h2 {
+  font-size: calc(1rem * var(--step) * var(--step));
+  margin: 2rem 0 0.75rem;
+}
+
+.page p,
+.page ul {
+  line-height: 1.65;
+}
+
+.page ul {
+  padding-left: 1.25rem;
+}
+
+.page li {
+  margin-bottom: 0.4rem;
+}
+
 .lede {
   font-size: calc(1rem * var(--step));
   color: var(--fg-muted);
   margin: 0 0 1.5rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.table-wrap table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9375rem;
+}
+
+.table-wrap th,
+.table-wrap td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.table-wrap th {
+  font-weight: 600;
+  color: var(--fg-muted);
+}
+
+.class-defs dt {
+  font-weight: 700;
+  margin-top: 1rem;
+}
+
+.class-defs dd {
+  margin: 0.25rem 0 0;
+  color: var(--fg-muted);
 }
 
 .status-note {
