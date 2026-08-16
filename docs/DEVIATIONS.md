@@ -199,4 +199,45 @@ green with an explicit `blob:`/`data:` exemption (in-page synthesized
 resources, e.g. a Worker built from a Blob for threaded WASM — never real
 network egress) added after that showed up as a false positive.
 
+## Post-M5 -- CI fix: NavBar .nav-links overflow at 320px, Linux-runner-only
+
+e2e/viewport.spec.ts ("320px no horizontal scroll") failed on the ubuntu
+GitHub Actions runner only, identically on all four routes (/, /reference,
+/method, /docs/limitations) -- document.documentElement.scrollWidth (346)
+exceeds clientWidth (320). Passed 13/13 locally on Windows both before and
+after investigating, confirming a platform-specific layout difference rather
+than a flaky test.
+
+**Root cause**, isolated by measuring the actual rendered nav box (not
+guessed): NavBar's `.nav-links` (`<ul>`, the 4 primary links) is
+`display: flex` with the browser default `flex-wrap: nowrap`, inside a plain
+`<nav>` block that is itself a flex item of `.nav-inner` (which does have
+`flex-wrap: wrap`). Because the `<ul>` never wraps, its rendered width is the
+full unwrapped sum of "listen" / "reference cards" / "method" / "limitations"
+plus gaps -- sized to content, not clamped to the available row. On Windows
+with Segoe UI, that unwrapped row measured 292px against a 280px available
+track at 320px viewport (nav.right landed at 312px -- only 8px of headroom
+before the 320px document edge; verified directly via getBoundingClientRect()
+in a throwaway Playwright diagnostic, not guessed). Ubuntu's Chromium has no
+Segoe UI installed; the font-family stack ("Segoe UI", system-ui,
+-apple-system, sans-serif) falls through to whatever generic sans the runner
+image provides, which renders the same words wider -- enough to eat the 8px
+margin and overflow by the reported 26px (346 - 320), identically on every
+route because NavBar is the only element those four pages share unchanged.
+
+**Fix** (`apps/web/src/styles.css`, `.nav-inner nav` and `.nav-links`):
+`flex-wrap: wrap` on `.nav-links` (links wrap onto a second line instead of
+being held to a single unwrapped row) plus `min-width: 0` on both
+`.nav-links` and its `<nav>` parent (overrides the flex default
+`min-width: auto`, which was flooring both elements at their unwrapped
+content width and preventing them from ever shrinking to the actual row
+width regardless of the wrap setting). This makes the layout robust to
+font-metric variance itself, rather than fitting inside a specific pixel
+budget measured on one platform's font stack -- verified by locally
+stress-testing with `page.addStyleTag` forcing every nav link to
+"Courier New", monospace at 18px (deliberately wider than any real fallback
+sans) across all four routes at 320px: zero document-level overflow. Re-ran
+`CI=true pnpm run ci` after the fix: 13/13 e2e green, including
+viewport.spec.ts on all four routes.
+
 ---

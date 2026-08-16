@@ -86,12 +86,28 @@ button {
   letter-spacing: -0.01em;
 }
 
+.nav-inner nav {
+  /* Flex items default to min-width: auto, which floors this element at
+     the unwrapped width of .nav-links below — on narrow viewports that
+     floor is font-metric-dependent (varies by platform fallback font) and
+     can exceed the available row width. min-width: 0 lets it actually
+     shrink to the row instead of overflowing past it. */
+  min-width: 0;
+}
+
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 1.25rem;
+  /* Wrap onto a second line at narrow widths instead of relying on the
+     unwrapped row fitting within budget — that budget is font-metric
+     dependent (see e2e/viewport.spec.ts 320px check) and must not be the
+     thing standing between us and a horizontal-scroll bug on some
+     platform's fallback sans-serif. */
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
   margin: 0;
   padding: 0;
+  min-width: 0;
 }
 
 .nav-link {
