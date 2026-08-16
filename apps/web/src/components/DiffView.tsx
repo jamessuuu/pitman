@@ -9,9 +9,9 @@ import { align, classifyMismatch, tokenize, type AlignEntry } from "@pitman/core
  * never attribute an error to "your accent" (enforced by
  * evidence-classes.test.ts, not just by convention here).
  */
-export function DiffView({ heard }: { heard: string }) {
+export function DiffView({ heard, initialMeant = "" }: { heard: string; initialMeant?: string }) {
   const inputId = useId();
-  const [meant, setMeant] = useState("");
+  const [meant, setMeant] = useState(initialMeant);
 
   const entries = useMemo<AlignEntry[]>(() => {
     if (meant.trim().length === 0) return [];

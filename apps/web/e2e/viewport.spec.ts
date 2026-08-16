@@ -3,7 +3,7 @@
 // it stays @smoke.
 import { test, expect } from "@playwright/test";
 
-const PAGES = ["/", "/method", "/docs/limitations"];
+const PAGES = ["/", "/reference", "/method", "/docs/limitations"];
 
 test.describe("320px no horizontal scroll @smoke", () => {
   for (const path of PAGES) {

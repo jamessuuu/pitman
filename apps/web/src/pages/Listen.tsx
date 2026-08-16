@@ -6,6 +6,7 @@ import { DiffView } from "../components/DiffView";
 import { useAsr } from "../lib/use-asr";
 import { decodeAudioFileTo16kMono, AudioDecodeError } from "../lib/decode-audio";
 import { useCallback, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const STATUS_COPY: Record<string, string> = {
   idle: "",
@@ -18,6 +19,8 @@ const STATUS_COPY: Record<string, string> = {
 export function ListenPage() {
   const { state, transcribeAudio } = useAsr();
   const [decodeError, setDecodeError] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
+  const initialMeant = searchParams.get("meant") ?? "";
 
   const handleFile = useCallback(
     async (file: File) => {
@@ -77,7 +80,7 @@ export function ListenPage() {
         )
       )}
 
-      {state.status === "done" && state.text && <DiffView heard={state.text} />}
+      {state.status === "done" && state.text && <DiffView heard={state.text} initialMeant={initialMeant} />}
 
       <ModelPanel state={state} />
     </section>

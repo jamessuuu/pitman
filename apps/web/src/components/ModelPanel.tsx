@@ -22,7 +22,7 @@ export function ModelPanel({ state }: { state: AsrState }) {
           </dd>
         </div>
         <div>
-          <dt>Model load time</dt>
+          <dt>Model load time {state.wasCached === null ? "" : state.wasCached ? "(warm)" : "(cold)"}</dt>
           <dd data-testid="load-ms">{state.loadMs === null ? "—" : `${Math.round(state.loadMs)} ms`}</dd>
         </div>
         <div>

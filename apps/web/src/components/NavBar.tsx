@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 
 const links = [
   { to: "/", label: "listen", end: true },
+  { to: "/reference", label: "reference cards" },
   { to: "/method", label: "method" },
   { to: "/docs/limitations", label: "limitations" },
 ];

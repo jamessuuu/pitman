@@ -19,6 +19,7 @@ export interface AsrState {
   provider: ProviderVerdict | null;
   actualDtype: ActualDtype | null;
   dtypeFallbackReason: string | null;
+  wasCached: boolean | null;
   bytesLoaded: number | null;
   downloadProgressPct: number | null;
   errorMessage: string | null;
@@ -34,6 +35,7 @@ const INITIAL_STATE: AsrState = {
   provider: null,
   actualDtype: null,
   dtypeFallbackReason: null,
+  wasCached: null,
   bytesLoaded: null,
   downloadProgressPct: null,
   errorMessage: null,
@@ -104,6 +106,7 @@ export function useAsr() {
       provider: load.provider,
       actualDtype: load.actualDtype,
       dtypeFallbackReason: load.dtypeFallbackReason,
+      wasCached: load.wasCached,
       bytesLoaded: load.bytesLoaded,
       downloadProgressPct: 100,
     }));

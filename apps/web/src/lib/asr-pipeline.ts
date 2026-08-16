@@ -64,6 +64,8 @@ export interface LoadResult {
   /** Which precision actually loaded — see module header for why this can differ from the requested "q8" default. */
   actualDtype: ActualDtype;
   dtypeFallbackReason: string | null;
+  /** false = first construction for this model/device/dtype (downloads + compiles); true = a cached pipeline resolved again (docs/pitman-SPEC.md Surfaces §3: "cold vs warm load time"). */
+  wasCached: boolean;
   /**
    * Real bytes read from the network for this load, per transformers.js's
    * own stream-reading progress tracking (status "progress_total"). NOT the
@@ -139,6 +141,7 @@ export async function loadAsrPipeline(
 
   const actualDtype: ActualDtype = device === "wasm" ? "fp32" : "q8";
   const dtypeFallbackReason = device === "wasm" ? WASM_Q8_UNSUPPORTED_REASON : null;
+  const wasCached = pipelineCache.has(cacheKey(model, device, actualDtype));
 
   const start = performance.now();
   const asrPipeline = await constructPipeline(model, device, actualDtype, progress_callback);
@@ -156,7 +159,7 @@ export async function loadAsrPipeline(
     consoleFallbackWarnings: signals.consoleFallbackWarnings,
   });
 
-  return { pipeline: asrPipeline, loadMs, requestedDevice: device, provider, actualDtype, dtypeFallbackReason, bytesLoaded };
+  return { pipeline: asrPipeline, loadMs, requestedDevice: device, provider, actualDtype, dtypeFallbackReason, wasCached, bytesLoaded };
 }
 
 /**
