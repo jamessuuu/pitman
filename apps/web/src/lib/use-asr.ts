@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { installInstrumentation, gpuAdapterAvailable } from "./instrument";
 import { loadAsrPipeline, transcribe, type ModelId, type LoadResult, type ActualDtype } from "./asr-pipeline";
+import type { WordConfidence } from "./confidence";
 import type { AutomaticSpeechRecognitionPipeline, ProgressInfo } from "@huggingface/transformers";
 import type { ProviderVerdict, RequestedDevice } from "@pitman/core";
 
@@ -12,6 +13,7 @@ export interface AsrState {
   status: AsrStatus;
   model: ModelId;
   text: string;
+  words: WordConfidence[];
   loadMs: number | null;
   inferMs: number | null;
   provider: ProviderVerdict | null;
@@ -26,6 +28,7 @@ const INITIAL_STATE: AsrState = {
   status: "idle",
   model: "Xenova/whisper-tiny.en",
   text: "",
+  words: [],
   loadMs: null,
   inferMs: null,
   provider: null,
@@ -111,6 +114,7 @@ export function useAsr() {
         ...s,
         status: "done",
         text: result.text,
+        words: result.words,
         inferMs: result.inferMs,
         provider: result.provider,
       }));

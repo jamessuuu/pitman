@@ -220,3 +220,124 @@ code {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Mic control */
+.mic-control {
+  margin-bottom: 1rem;
+}
+
+.mic-button {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.65rem 1.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-fg);
+  cursor: pointer;
+}
+
+.mic-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.mic-button-recording {
+  background: #b3261e;
+  border-color: #b3261e;
+}
+
+/* Confidence visualization — the model's self-report, never a claim about
+   the speaker (docs/pitman-SPEC.md D1). Amber, not red: uncertainty is not
+   an error. */
+.confidence-viz {
+  font-size: 1.125rem;
+  line-height: 1.9;
+  padding: 1rem;
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.conf-word {
+  border-radius: 0.2em;
+  padding: 0.05em 0.15em;
+}
+
+.conf-medium {
+  background: color-mix(in srgb, #c98a1f 22%, transparent);
+}
+
+.conf-low {
+  background: color-mix(in srgb, #c98a1f 45%, transparent);
+}
+
+/* Diff view */
+.diff-view {
+  margin: 1.5rem 0;
+}
+
+.diff-view label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.diff-view textarea {
+  width: 100%;
+  font: inherit;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--fg);
+  resize: vertical;
+}
+
+.diff-result {
+  margin-top: 1rem;
+}
+
+.diff-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+}
+
+.diff-chip {
+  font-size: 0.8125rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+.diff-tokens {
+  font-size: 1.0625rem;
+  line-height: 1.8;
+}
+
+.diff-tok {
+  border-radius: 0.2em;
+  padding: 0.05em 0.2em;
+}
+
+.diff-match,
+.diff-chip.diff-match {
+  background: color-mix(in srgb, #2e7d4f 20%, transparent);
+}
+
+.diff-sub,
+.diff-chip.diff-sub {
+  background: color-mix(in srgb, #c98a1f 30%, transparent);
+}
+
+.diff-del,
+.diff-chip.diff-del {
+  background: color-mix(in srgb, var(--fg) 12%, transparent);
+  text-decoration: line-through;
+}
+
+.diff-ins,
+.diff-chip.diff-ins {
+  background: color-mix(in srgb, #4a86e8 22%, transparent);
+}

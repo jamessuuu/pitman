@@ -24,15 +24,10 @@
 // try-then-catch. q8 is still what loads whenever the provider can
 // actually run it (webgpu, always); wasm always gets fp32 directly, with
 // the fact surfaced in the model panel (never hidden).
-import {
-  env,
-  pipeline,
-  type AutomaticSpeechRecognitionPipeline,
-  type AutomaticSpeechRecognitionOutput,
-  type ProgressInfo,
-} from "@huggingface/transformers";
+import { env, pipeline, type AutomaticSpeechRecognitionPipeline, type ProgressInfo } from "@huggingface/transformers";
 import { gpuAdapterAvailable, readSignalsSnapshot, resetSignals } from "./instrument";
 import { deriveExecutionProvider, type ProviderVerdict, type RequestedDevice } from "@pitman/core";
+import { transcribeWithConfidence, type WordConfidence } from "./confidence";
 
 // Importing @huggingface/transformers (above) sets
 // env.backends.onnx.wasm.wasmPaths to a jsdelivr CDN URL as a MODULE-LOAD-
@@ -52,8 +47,6 @@ if (env.backends.onnx.wasm) {
     mjs: "/ort/ort-wasm-simd-threaded.asyncify.mjs",
   };
 }
-
-type AsrChunk = NonNullable<AutomaticSpeechRecognitionOutput["chunks"]>[number];
 
 export type ModelId = "Xenova/whisper-tiny.en" | "Xenova/whisper-base.en";
 export type ActualDtype = "q8" | "fp32";
@@ -87,6 +80,7 @@ export interface LoadResult {
 export interface TranscribeResult {
   text: string;
   chunks?: Array<{ text: string; timestamp: [number, number | null] }>;
+  words: WordConfidence[];
   inferMs: number;
   provider: ProviderVerdict;
 }
@@ -165,7 +159,14 @@ export async function loadAsrPipeline(
   return { pipeline: asrPipeline, loadMs, requestedDevice: device, provider, actualDtype, dtypeFallbackReason, bytesLoaded };
 }
 
-/** Run one transcription and read back the execution-provider verdict for THIS call. */
+/**
+ * Run one transcription and read back the execution-provider verdict for
+ * THIS call. Uses transcribeWithConfidence (confidence.ts) as the sole
+ * transcription path — it produces the same text a plain pipeline() call
+ * would (via the identical internal _decode_asr method), plus real
+ * per-word confidence, in one pass. See confidence.ts's module header for
+ * why greedy pipeline() calls alone can never supply confidence data.
+ */
 export async function transcribe(
   asrPipeline: AutomaticSpeechRecognitionPipeline,
   audio: Float32Array,
@@ -175,9 +176,7 @@ export async function transcribe(
   const adapterAvailable = await gpuAdapterAvailable();
 
   const start = performance.now();
-  const output = (await asrPipeline(audio, {
-    return_timestamps: "word",
-  })) as AutomaticSpeechRecognitionOutput;
+  const { text, words } = await transcribeWithConfidence(asrPipeline, audio);
   const inferMs = performance.now() - start;
 
   const signals = readSignalsSnapshot();
@@ -188,9 +187,7 @@ export async function transcribe(
     consoleFallbackWarnings: signals.consoleFallbackWarnings,
   });
 
-  const text = Array.isArray(output) ? (output[0]?.text ?? "") : (output.text ?? "");
-  const rawChunks = Array.isArray(output) ? output[0]?.chunks : output.chunks;
-  const chunks = rawChunks?.map((c: AsrChunk) => ({ text: c.text, timestamp: c.timestamp as [number, number | null] }));
+  const chunks = words.map((w) => ({ text: w.text, timestamp: [w.start ?? 0, w.end] as [number, number | null] }));
 
-  return { text, chunks, inferMs, provider };
+  return { text, chunks, words, inferMs, provider };
 }

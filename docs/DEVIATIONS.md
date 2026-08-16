@@ -108,7 +108,59 @@ against outright breakage (WER ≤ 0.75) and logs both numbers for the
 record. This divergence is real, disclosed content for `/docs/limitations`
 (M5), not a defect masked by a loosened test.
 
-**Also fixed during M2 (found via the zero-upload-network e2e assertion,
+**## M3 — confidence data doesn't exist in transformers.js's public API; recovered via a teacher-forcing pass
+
+docs/pitman-SPEC.md Surfaces §1 requires "per-word confidence visualization."
+transformers.js's `pipeline()` for ASR never provides this, at any settings:
+its default sampler (greedy, deterministic — what `pipeline()` uses) hardcodes
+the returned token "score" to 0 (`src/generation/logits_sampler.js`'s
+`GreedySampler`: *"score is meaningless in this context, since we are
+performing greedy search (p = 1 => log(p) = 0)"*), and the
+`output_scores`/`return_dict_in_generate` generation-config flags exist in
+the schema but are never wired into a scores-collection code path in this
+package version (checked `src/models/modeling_utils.js`'s `generate()` loop
+— only `output_attentions` is actually collected). This is a real gap in
+the library, not a misconfiguration on this app's part.
+
+**Fix (`src/lib/confidence.ts`):** one extra forward pass in teacher-forcing
+mode — `model.forward({ input_features, decoder_input_ids: <the full
+already-generated sequence> })` with no `past_key_values` (the same
+"prefill" code path `generate()`'s own first step already uses, just
+extended to the whole sequence) — returns `logits` for every position;
+`log_softmax` + look up the actual next token's probability recovers the
+model's real, contemporaneous per-token confidence. Verified first via a
+standalone Node script (not committed) against
+`common_voice_en_187061.mp3`: real, varying probabilities (0.024-0.979),
+matching what the model actually got right vs. wrong (e.g. "truck" — the
+wrong-but-confident word that replaced "track" — scored 0.964; "so", part
+of the garbled opening, scored 0.100). This reaches into the pipeline's
+own public `.model`/`.tokenizer`/`.processor` properties and one
+internal-but-stable method (`tokenizer._decode_asr`, the exact method the
+pipeline calls internally for chunk decoding — used unchanged here so the
+displayed transcript text matches character-for-character what a plain
+`pipeline()` call would produce). Pinned to `@huggingface/transformers@^4.2.0`;
+flagged in `confidence.ts` to re-verify against the fixture clips on any
+future major bump.
+
+## M3 — mic permission prompt can hang forever with no error
+
+Found via manual verification (`mcp__agent-browser`, a real Chrome profile):
+`getUserMedia({audio:true})`'s promise never settled — no error, no
+timeout — when the browser's native permission prompt was never answered
+(no real microphone device, no auto-answer policy). Confirmed by directly
+awaiting the call in-page: it was still pending after 30 minutes. Left
+un-timeboxed, this would strand the mic button on "Requesting microphone
+access…" indefinitely with no recovery except a page reload — its own
+small dead end, even though D3's actual requirement (file-drop stays
+usable) already held throughout, since the Dropzone is never gated by mic
+state. Fixed in `src/lib/use-mic-recorder.ts`: races `getUserMedia()`
+against a 15s timeout, surfaces an actionable "timeout" status
+(re-enabled button, dropzone untouched), and stops any track from a
+late-arriving grant so no orphaned microphone stream lingers after
+giving up. Manually re-verified: recovers to the timeout state at 15-17s,
+both controls still enabled throughout.
+
+Also fixed during M2 (found via the zero-upload-network e2e assertion,
 not anticipated in the spec):** `@huggingface/transformers` sets
 `env.backends.onnx.wasm.wasmPaths` to a `cdn.jsdelivr.net` URL as a
 module-load-time side effect unless overridden — a real violation of

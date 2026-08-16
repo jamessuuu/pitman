@@ -1,5 +1,8 @@
 import { Dropzone } from "../components/Dropzone";
+import { MicButton } from "../components/MicButton";
 import { ModelPanel } from "../components/ModelPanel";
+import { ConfidenceViz } from "../components/ConfidenceViz";
+import { DiffView } from "../components/DiffView";
 import { useAsr } from "../lib/use-asr";
 import { decodeAudioFileTo16kMono, AudioDecodeError } from "../lib/decode-audio";
 import { useCallback, useState } from "react";
@@ -39,10 +42,11 @@ export function ListenPage() {
     <section className="page" aria-labelledby="listen-heading">
       <h1 id="listen-heading">See exactly what the model heard</h1>
       <p className="lede">
-        Drop a WAV or MP3 file. pitman transcribes it entirely on your device — nothing leaves your browser — and
-        shows you the model&apos;s transcript.
+        Record a short clip or drop a WAV/MP3 file. pitman transcribes it entirely on your device — nothing leaves
+        your browser — and shows you the model&apos;s transcript with per-word confidence.
       </p>
 
+      <MicButton onRecording={handleFile} disabled={busy} />
       <Dropzone onFile={handleFile} disabled={busy} />
 
       <p className="status-note" role="status" aria-live="polite" data-testid="asr-status">
@@ -63,11 +67,17 @@ export function ListenPage() {
         </p>
       )}
 
-      {state.text && (
-        <p className="transcript" data-testid="transcript">
-          {state.text}
-        </p>
+      {state.words.length > 0 ? (
+        <ConfidenceViz words={state.words} />
+      ) : (
+        state.text && (
+          <p className="transcript" data-testid="transcript">
+            {state.text}
+          </p>
+        )
       )}
+
+      {state.status === "done" && state.text && <DiffView heard={state.text} />}
 
       <ModelPanel state={state} />
     </section>
