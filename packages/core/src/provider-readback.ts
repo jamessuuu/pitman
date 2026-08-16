@@ -1,7 +1,7 @@
 /**
  * Pure decision logic for "did inference actually run on the execution
  * provider we asked for". Ported from, and credited to, the sibling
- * project shipgauge (C:\Users\admin\shipgauge\scripts\lib\provider-readback.mjs
+ * project shipgauge (github.com/jamessuuu/shipgauge, scripts/lib/provider-readback.mjs
  * — "a browser-ML shippability study" built earlier in this program), which
  * established the exact mechanism: never trust the requested `device`
  * config alone. The raw signal (GPUQueue.prototype.submit call count,

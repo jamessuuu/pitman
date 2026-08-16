@@ -3,7 +3,6 @@ node_modules/
 
 # Unrelated tooling/plugin debris observed in this working tree (not part
 # of pitman) — ignored so it never gets committed by accident.
-.firm-pro/
 dist/
 out/
 build/
