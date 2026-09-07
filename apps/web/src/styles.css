@@ -449,8 +449,37 @@ code {
   text-wrap: balance;
 }
 
+/* Emphasis, without a slant.
+ *
+ * Archivo and Commit Mono ship roman only — the substrate has no italic for
+ * either — so `font-style: italic` on an <em> is SYNTHESIZED: Chrome shears
+ * the roman, producing a slant with none of a true italic's letterform
+ * changes. No gate catches it, because `document.fonts.check("italic 16px
+ * Archivo")` returns TRUE with no italic loaded: the family matches and the
+ * browser is willing to fake it. Only enumerating loaded faces reveals it
+ * (scripts/probe-synthesis.mjs).
+ *
+ * Newsreader is the one face in the system with a real italic, and it is
+ * deliberately NOT spent here. In this app the serif means one specific
+ * thing — "a person said this" — and it earns its place by carrying that
+ * distinction against the mono's "the machine produced this". Using it for
+ * generic emphasis would blur the only type signal doing argumentative work,
+ * to fix a slant.
+ *
+ * So emphasis uses the device the headline already uses: upright, in the
+ * signal colour, with a weight step. Two channels rather than colour alone
+ * (WCAG 1.4.1), distinct from <strong>'s neutral bold, and zero added bytes.
+ */
+em,
+i {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--accent);
+}
+
 .display em {
   font-style: normal;
+  font-weight: inherit;
   color: var(--accent);
 }
 
