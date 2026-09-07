@@ -30,7 +30,13 @@ test.setTimeout(120_000);
 test.describe("D3 — mic is additive, file-drop never gated @smoke", () => {
   test("mic button and file-drop both render on load, independent of mic state", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByTestId("file-input")).toBeVisible();
+    // Assert the affordance a person can actually SEE, not the input element.
+    // The real <input type="file"> is a transparent full-size overlay on the
+    // styled label (src/components/Dropzone.tsx), so asserting `toBeVisible`
+    // on the input would pass on a technicality — Playwright ignores opacity —
+    // while telling us nothing about whether the control is on screen. The
+    // label is the thing D3 actually promises is never gated behind mic state.
+    await expect(page.getByTestId("file-control")).toBeVisible();
     await expect(page.getByTestId("file-input")).toBeEnabled();
     await expect(page.getByRole("button", { name: "Record a clip" })).toBeVisible();
   });

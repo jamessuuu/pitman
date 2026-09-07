@@ -974,44 +974,105 @@ code {
   background: color-mix(in oklab, var(--accent) 8%, var(--sub-2));
 }
 
-.dropzone label {
-  display: block;
+.dropzone-hint {
+  margin: 0;
   color: var(--fg-muted);
   font-size: 0.875rem;
 }
 
-.dropzone input[type="file"] {
-  width: 100%;
+/* The visible control. The real <input type="file"> is a transparent overlay
+   on top of this at full size (see Dropzone.tsx) — the browser's own control
+   renders an unstyled system button and a "No file chosen" string, which was
+   the last obviously-unfinished element on the page. */
+.file-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-self: start;
   min-width: 0;
-  max-width: 100%;
-  font: inherit;
-  font-size: 0.875rem;
-  color: var(--fg-muted);
+  padding: 0.3rem;
+  margin: -0.3rem;
+  border-radius: var(--radius-control);
+  cursor: pointer;
 }
 
-.dropzone input[type="file"]::file-selector-button {
-  font: inherit;
-  font-size: 0.875rem;
+.file-control-btn {
   font-weight: 600;
-  padding: 0.45rem 1rem;
-  margin-right: 0.7rem;
+  font-size: 0.875rem;
+  padding: 0.5rem 1.05rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   border-radius: 999px;
   border: 1px solid var(--border-strong);
   background: var(--sub-1);
   color: var(--fg);
-  cursor: pointer;
+  box-shadow: var(--depth-edge), var(--elev-1);
+  white-space: nowrap;
   transition:
     background-color var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out);
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 
-.dropzone input[type="file"]::file-selector-button:hover {
+.file-control:hover .file-control-btn {
   border-color: var(--accent);
-  background: var(--sub-2);
+  box-shadow: var(--depth-edge), var(--elev-2);
+  transform: translateY(-1px);
 }
 
-.dropzone input[type="file"]:disabled::file-selector-button {
+.file-control:active .file-control-btn {
+  transform: translateY(0);
+  box-shadow: var(--depth-edge), var(--elev-1);
+}
+
+/* The overlay input is transparent, so the focus ring has to be drawn by the
+   label it covers. */
+.file-control:focus-within .file-control-btn {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.file-control-name {
+  font-size: 0.8rem;
+  color: var(--fg-faint);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-control-disabled {
+  cursor: not-allowed;
+}
+
+.file-control-disabled .file-control-btn {
   opacity: 0.55;
+}
+
+.file-control-disabled:hover .file-control-btn {
+  border-color: var(--border-strong);
+  box-shadow: var(--depth-edge), var(--elev-1);
+  transform: none;
+}
+
+/* Full-size and on-screen deliberately: a zero-size or off-viewport
+   focusable control fails the clipped-control and touch-target audits this
+   project already fixed once for the skip link. Transparent, not hidden. */
+.file-input-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: inherit;
+  font-size: 0;
+}
+
+.file-input-overlay:disabled {
   cursor: not-allowed;
 }
 
