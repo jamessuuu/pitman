@@ -80,7 +80,10 @@
   --sub-2: #f1ece4;
   --fg: #17150f;
   --fg-muted: #5a554a;
-  --fg-faint: #857f71;
+  /* Solved for WCAG 1.4.3 on the darkest light surface (--sub-2), not
+     picked by eye: 3.39:1 -> 4.60:1, hue and saturation preserved so the
+     de-emphasis this token exists for survives. See scripts/solve-contrast.mjs. */
+  --fg-faint: #6f6a5e;
   --border: #ded7ca;
   --border-strong: #c8bfad;
 
@@ -94,7 +97,9 @@
   /* ---- semantic data colours (never decorative) ---- */
   --ok: #2c6b4a;
   --ok-wash: #2c6b4a;
-  --warn: #a8720f;
+  /* Same solve: 3.52:1 -> 4.61:1. Carries the mid-range word error rates,
+     which are content, not decoration. */
+  --warn: #8f610d;
   --warn-wash: #c98a1f;
   --bad: #a3271f;
   --ins: #3c6a99;
@@ -130,7 +135,8 @@
     --sub-2: #262016;
     --fg: #f5f1e8;
     --fg-muted: #b6ae9e;
-    --fg-faint: #8b8375;
+    /* 4.31:1 -> 4.60:1 on the lightest dark surface. */
+    --fg-faint: #90887b;
     --border: #362f22;
     --border-strong: #4a4131;
 
