@@ -2,43 +2,61 @@ import { Link } from "react-router-dom";
 import { REFERENCE_CARDS } from "../data/reference-cards";
 
 const CLASS_LABEL: Record<"A" | "B", string> = {
-  A: "Class A — the model doesn't know this word",
-  B: "Class B — documented across multiple speakers",
+  A: "class A · vocabulary gap",
+  B: "class B · documented across speakers",
 };
 
 export function ReferenceCardsPage() {
   return (
-    <section className="page" aria-labelledby="reference-heading">
-      <h1 id="reference-heading">Reference cards</h1>
-      <p className="lede">
-        Read one of these sentences aloud (or drop a recording of yourself reading one) on the{" "}
-        <Link to="/">listen page</Link>. Each one is built to show a specific, evidenced kind of mismatch — never a
-        judgment on how you said it.
-      </p>
-      <p className="status-note">
-        <strong>Class A</strong> — a rare word or name the model has never learned, so it guesses wrong for anyone
-        who says it. <strong>Class B</strong> — one specific, recurring mix-up the probe measured across multiple
-        speakers and both models, with no match in its control group. Everything else the model gets wrong has no
-        established pattern yet, and pitman says so rather than guessing why.
-      </p>
+    <div className="page stack gap-6">
+      <header className="stack gap-4 section">
+        <p className="eyebrow">practice sentences · every one from the probe</p>
+        <h1 className="display">Sentences with a known answer</h1>
+        <p className="lede">
+          Read one aloud on the <Link to="/">listen page</Link>, or drop a recording. Each is a real sentence from the
+          probe, chosen because a specific, evidenced kind of mismatch has already been measured on it — never
+          because of how anyone said it.
+        </p>
+      </header>
+
+      <div className="grid-2">
+        <article className="card">
+          <p className="card-tag">
+            <span className="tab-dot dot-A" aria-hidden="true" />
+            class A
+          </p>
+          <p className="prose">
+            A rare word or name the model never learned, so it guesses wrong for anyone who says it.
+          </p>
+        </article>
+        <article className="card">
+          <p className="card-tag">
+            <span className="tab-dot dot-B" aria-hidden="true" />
+            class B
+          </p>
+          <p className="prose">
+            One recurring mix-up measured across multiple speakers and both models, with no match in the control
+            group. Anything else has no established pattern, and pitman says so rather than guessing.
+          </p>
+        </article>
+      </div>
 
       <ul className="card-list">
         {REFERENCE_CARDS.map((card) => (
-          <li key={card.id} className="ref-card" data-testid="reference-card">
-            <span className={`diff-chip ${card.evidenceClass === "A" ? "diff-sub" : "diff-ins"}`}>
+          <li key={card.id} className="card" data-testid="reference-card">
+            <p className="card-tag">
+              <span className={`tab-dot dot-${card.evidenceClass}`} aria-hidden="true" />
               {CLASS_LABEL[card.evidenceClass]}
-            </span>
+            </p>
             <p className="ref-card-sentence">&ldquo;{card.sentence}&rdquo;</p>
             <p className="ref-card-explanation">{card.explanation}</p>
-            <p className="ref-card-citation">
-              <em>{card.citation}</em>
-            </p>
+            <p className="ref-card-citation">{card.citation}</p>
             <Link className="ref-card-try" to={`/?meant=${encodeURIComponent(card.sentence)}`}>
-              Try this on the listen page →
+              Try this <span aria-hidden="true">→</span>
             </Link>
           </li>
         ))}
       </ul>
-    </section>
+    </div>
   );
 }

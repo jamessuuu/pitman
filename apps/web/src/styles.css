@@ -1,24 +1,157 @@
+/* pitman — product surface.
+ *
+ * Built on the portfolio substrate's §12 principles (elevation ladder, 10px
+ * structure radius, one easing curve + two durations, ambient signal wash,
+ * all motion off under prefers-reduced-motion). The substrate package is not
+ * vendored into this repo, so its tokens are composed locally here — this
+ * file is the token file, and no colour literal appears outside this :root
+ * block and its dark-mode counterpart.
+ *
+ * Identity: pitman's own oxblood on warm paper. The signal hue is the same
+ * one the brand mark uses; nothing here introduces a second accent.
+ */
+
+/* ---- faces ----------------------------------------------------------
+ * Three real faces, self-hosted. Self-hosting is not a preference here: this
+ * app's own e2e suite asserts that no request leaves for any host outside
+ * the model CDN, so a Google Fonts link would fail the privacy test that is
+ * the whole point of the product. Files are the portfolio substrate's own
+ * builds (Archivo, Commit Mono, Newsreader — all OFL 1.1, subset to latin;
+ * licences alongside them in public/fonts/). 98 KB total.
+ *
+ * They are not interchangeable, they carry meaning:
+ *   Archivo    — structure. Headlines, UI, labels.
+ *   Newsreader — the human voice. What a person actually said.
+ *   Commit Mono — the machine. Transcripts, error rates, every measured number.
+ */
+@font-face {
+  font-family: "Archivo";
+  src: url("/fonts/archivo-variable.woff2") format("woff2-variations"), url("/fonts/archivo-variable.woff2") format("woff2");
+  font-weight: 400 600;
+  font-stretch: 85% 125%;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Commit Mono";
+  src: url("/fonts/commit-mono-variable.woff2") format("woff2-variations"), url("/fonts/commit-mono-variable.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Newsreader";
+  src: url("/fonts/newsreader-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+/* Metric-matched fallbacks so font-display: swap costs zero layout shift.
+   Metrics computed by the substrate build (unjs/fontaine method). */
+@font-face {
+  font-family: "Archivo Fallback";
+  src: local("Arial");
+  size-adjust: 122.7%;
+  ascent-override: 71.56%;
+  descent-override: 17.11%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Commit Mono Fallback";
+  src: local("Courier New");
+  size-adjust: 99.98%;
+  ascent-override: 90.01%;
+  descent-override: 20%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Newsreader Fallback";
+  src: local("Georgia");
+  size-adjust: 122.25%;
+  ascent-override: 60.12%;
+  descent-override: 21.68%;
+  line-gap-override: 0%;
+}
+
 :root {
   color-scheme: light dark;
-  --bg: #fbfaf8;
-  --fg: #1b1a17;
-  --fg-muted: #55524a;
-  --border: #ddd8cf;
+
+  /* ---- ground + ink ---- */
+  --bg: #f7f4ef;
+  --sub-1: #fffdfa;
+  --sub-2: #f1ece4;
+  --fg: #17150f;
+  --fg-muted: #5a554a;
+  --fg-faint: #857f71;
+  --border: #ded7ca;
+  --border-strong: #c8bfad;
+
+  /* ---- signal ---- */
   --accent: #8a4b2f;
-  --accent-fg: #ffffff;
-  --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-  --step: 1.333;
+  --accent-strong: #6f3a22;
+  --accent-fg: #fffdfa;
+  --signal-glow: #c2703f;
+  --info-glow: #4a6d8a;
+
+  /* ---- semantic data colours (never decorative) ---- */
+  --ok: #2c6b4a;
+  --ok-wash: #2c6b4a;
+  --warn: #a8720f;
+  --warn-wash: #c98a1f;
+  --bad: #a3271f;
+  --ins: #3c6a99;
+
+  /* ---- depth: value step + edge highlight + contact shadow ---- */
+  --shadow-ink: #3a2c1c;
+  --depth-edge: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --elev-1: 0 1px 2px -1px rgba(58, 44, 28, 0.12), 0 4px 12px -4px rgba(58, 44, 28, 0.14);
+  --elev-2: 0 2px 4px -2px rgba(58, 44, 28, 0.16), 0 12px 32px -8px rgba(58, 44, 28, 0.2);
+  --elev-3: 0 4px 8px -4px rgba(58, 44, 28, 0.2), 0 24px 64px -12px rgba(58, 44, 28, 0.26);
+
+  /* ---- geometry ---- */
+  --radius-structure: 10px;
+  --radius-control: 8px;
+  --radius-flush: 0px;
+
+  /* ---- motion: one curve, two durations ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 140ms;
+  --dur-slow: 420ms;
+
+  /* ---- type ---- */
+  --font-sans: "Archivo", "Archivo Fallback", Arial, sans-serif;
+  --font-mono: "Commit Mono", "Commit Mono Fallback", "Courier New", monospace;
+  --font-voice: "Newsreader", "Newsreader Fallback", Georgia, serif;
+  --font-display: var(--font-sans);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #17140f;
-    --fg: #f2efe9;
-    --fg-muted: #b8b2a4;
-    --border: #3a352b;
+    --bg: #131009;
+    --sub-1: #1d1810;
+    --sub-2: #262016;
+    --fg: #f5f1e8;
+    --fg-muted: #b6ae9e;
+    --fg-faint: #8b8375;
+    --border: #362f22;
+    --border-strong: #4a4131;
+
     --accent: #d78c5f;
+    --accent-strong: #e9a67d;
     --accent-fg: #17140f;
+    --signal-glow: #d78c5f;
+    --info-glow: #6d9ac2;
+
+    --ok: #63b98c;
+    --ok-wash: #2c6b4a;
+    --warn: #dba33f;
+    --warn-wash: #c98a1f;
+    --bad: #f08d84;
+    --ins: #7aaad8;
+
+    --shadow-ink: #000000;
+    --depth-edge: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    --elev-1: 0 1px 2px -1px rgba(0, 0, 0, 0.5), 0 4px 12px -4px rgba(0, 0, 0, 0.55);
+    --elev-2: 0 2px 4px -2px rgba(0, 0, 0, 0.55), 0 12px 32px -8px rgba(0, 0, 0, 0.6);
+    --elev-3: 0 4px 8px -4px rgba(0, 0, 0, 0.6), 0 24px 64px -12px rgba(0, 0, 0, 0.66);
   }
 }
 
@@ -36,23 +169,43 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-sans);
-  line-height: 1.5;
+  line-height: 1.55;
   min-width: 320px;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* ============================================================ primitives */
+
+/* Hidden until focused, using clip-path rather than left: -9999px. The old
+   technique parks a real, focusable control 9999px outside the viewport,
+   which reads as a clipped control to any layout audit (project-gate flags
+   it), behaves badly in RTL, and is no longer the recommended pattern. This
+   keeps the element at its natural position and clips it to nothing. */
+/* Hidden until focused. Two earlier techniques both failed an audit for a
+   real reason: `left: -9999px` parks a focusable control outside the
+   viewport (reads as a clipped control, and behaves badly in RTL), and
+   collapsing it to 1x1 leaves a focusable target below the WCAG 2.2 AA
+   24px floor. This keeps the control at full size and out of flow, and
+   clips only its PAINT — so it occupies no visual space, pushes nothing,
+   and is a properly sized target the moment it is focused. */
 .skip-link {
   position: absolute;
-  left: -9999px;
-  top: 0;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 100;
+  padding: 0.7rem 1.1rem;
+  white-space: nowrap;
+  clip-path: inset(50%);
+  pointer-events: none;
   background: var(--accent);
   color: var(--accent-fg);
-  padding: 0.75rem 1rem;
-  z-index: 100;
+  border-radius: var(--radius-control);
+  box-shadow: var(--elev-2);
 }
 
 .skip-link:focus {
-  left: 0.5rem;
-  top: 0.5rem;
+  clip-path: none;
+  pointer-events: auto;
 }
 
 a,
@@ -61,50 +214,185 @@ button {
 }
 
 :focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 2px;
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
 }
 
+code {
+  font-family: var(--font-mono);
+  background: var(--sub-2);
+  padding: 0.12em 0.38em;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* Panels: value step + edge highlight + contact shadow. Not a hairline. */
+.panel {
+  position: relative;
+  background: var(--sub-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-structure);
+  box-shadow: var(--depth-edge), var(--elev-1);
+  transition:
+    box-shadow var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+}
+
+.panel-raised {
+  box-shadow: var(--depth-edge), var(--elev-2);
+}
+
+.panel-hover:hover {
+  box-shadow: var(--depth-edge), var(--elev-2);
+  transform: translateY(-2px);
+}
+
+/* The ambient signal wash. One tinted radial bloom behind the hero at low
+   opacity — the Linear technique (a gradient div, not a renderer). No
+   backdrop-filter and no blur() anywhere on this site: both were measured
+   this week as real frame-rate costs (blur on a shadow layer 58 -> 24fps). */
+.ambient {
+  position: relative;
+  isolation: isolate;
+  overflow: clip; /* the gradient must never widen the page — a bled */
+}
+/* ambient gradient once pushed a 390px page to a 437px PNG. */
+
+.ambient::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -30% -5% auto -5%;
+  height: 150%;
+  pointer-events: none;
+  background:
+    radial-gradient(58% 52% at 16% 0%, color-mix(in oklab, var(--signal-glow) 20%, transparent), transparent 68%),
+    radial-gradient(44% 44% at 86% 10%, color-mix(in oklab, var(--info-glow) 12%, transparent), transparent 70%);
+}
+
+/* Controls respond to being touched. */
+.btn {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.6rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-fg);
+  cursor: pointer;
+  box-shadow: var(--elev-1);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  box-shadow: var(--elev-2);
+  transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--elev-1);
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-quiet {
+  background: var(--sub-1);
+  color: var(--fg);
+  border-color: var(--border-strong);
+  border-radius: var(--radius-control);
+}
+
+.btn-quiet:hover:not(:disabled) {
+  background: var(--sub-2);
+  border-color: var(--accent);
+  color: var(--fg);
+}
+
+/* Entrance. Content arriving with intent. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise var(--dur-slow) var(--ease-out) both;
+}
+.rise-2 {
+  animation-delay: 70ms;
+}
+.rise-3 {
+  animation-delay: 140ms;
+}
+.rise-4 {
+  animation-delay: 210ms;
+}
+
+/* ============================================================ chrome */
+
 .nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in oklab, var(--bg) 88%, transparent);
   border-bottom: 1px solid var(--border);
 }
 
 .nav-inner {
-  max-width: 60rem;
+  max-width: 72rem;
   margin: 0 auto;
-  padding: 1rem 1.25rem;
+  padding: 0.85rem 1.25rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem 1rem;
   justify-content: space-between;
 }
 
 .nav-brand {
   font-weight: 700;
-  font-size: 1.125rem;
-  letter-spacing: -0.01em;
+  font-size: 1.0625rem;
+  letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-brand::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 16%, transparent);
 }
 
 .nav-inner nav {
-  /* Flex items default to min-width: auto, which floors this element at
-     the unwrapped width of .nav-links below — on narrow viewports that
-     floor is font-metric-dependent (varies by platform fallback font) and
-     can exceed the available row width. min-width: 0 lets it actually
-     shrink to the row instead of overflowing past it. */
   min-width: 0;
 }
 
 .nav-links {
   list-style: none;
   display: flex;
-  /* Wrap onto a second line at narrow widths instead of relying on the
-     unwrapped row fitting within budget — that budget is font-metric
-     dependent (see e2e/viewport.spec.ts 320px check) and must not be the
-     thing standing between us and a horizontal-scroll bug on some
-     platform's fallback sans-serif. */
   flex-wrap: wrap;
-  gap: 0.5rem 1.25rem;
+  gap: 0.35rem 0.4rem;
   margin: 0;
   padding: 0;
   min-width: 0;
@@ -113,86 +401,998 @@ button {
 .nav-link {
   text-decoration: none;
   color: var(--fg-muted);
-  padding: 0.25rem 0;
-  border-bottom: 2px solid transparent;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-control);
+  font-size: 0.9375rem;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
 }
 
 .nav-link:hover {
   color: var(--fg);
+  background: var(--sub-2);
 }
 
 .nav-link-active {
   color: var(--fg);
-  border-bottom-color: var(--accent);
+  background: var(--sub-2);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
 }
 
 .page {
-  max-width: 42rem;
+  max-width: 72rem;
   margin: 0 auto;
-  padding: 2.5rem 1.25rem 4rem;
+  padding: 2rem 1.25rem 4rem;
 }
 
-.page h1 {
-  font-size: calc(1rem * var(--step) * var(--step) * var(--step));
-  line-height: 1.15;
-  margin: 0 0 1rem;
-}
-
-.page-wide {
+.page-narrow {
   max-width: 46rem;
 }
 
-.page h2 {
-  font-size: calc(1rem * var(--step) * var(--step));
-  margin: 2rem 0 0.75rem;
+/* ============================================================ type */
+
+.display {
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 5.4vw, 3.9rem);
+  line-height: 1.03;
+  letter-spacing: -0.032em;
+  font-stretch: 94%;
+  font-weight: 600;
+  margin: 0;
+  text-wrap: balance;
 }
 
-.page p,
-.page ul {
-  line-height: 1.65;
+.display em {
+  font-style: normal;
+  color: var(--accent);
 }
 
-.page ul {
-  padding-left: 1.25rem;
+.h2 {
+  font-stretch: 96%;
+  font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+  line-height: 1.15;
+  letter-spacing: -0.022em;
+  font-weight: 700;
+  margin: 0;
+  text-wrap: balance;
 }
 
-.page li {
-  margin-bottom: 0.4rem;
+.h3 {
+  font-size: 1.0625rem;
+  letter-spacing: -0.012em;
+  font-weight: 700;
+  margin: 0;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  margin: 0;
 }
 
 .lede {
-  font-size: calc(1rem * var(--step));
+  font-size: clamp(1rem, 1.5vw, 1.1rem);
   color: var(--fg-muted);
-  margin: 0 0 1.5rem;
+  margin: 0;
+  max-width: 58ch;
+  line-height: 1.6;
 }
 
+.prose {
+  max-width: 66ch;
+  line-height: 1.68;
+  color: var(--fg-muted);
+}
+
+.prose strong {
+  color: var(--fg);
+}
+
+.prose p {
+  margin: 0 0 0.9rem;
+}
+
+.prose p:last-child {
+  margin-bottom: 0;
+}
+
+.small {
+  font-size: 0.8125rem;
+  color: var(--fg-faint);
+  line-height: 1.55;
+}
+
+/* Data is mono, tabular, and gets real size. */
+.data {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.stack > *,
+.grid-2 > *,
+.hero-grid > * {
+  min-width: 0;
+}
+.gap-1 { gap: 0.35rem; }
+.gap-2 { gap: 0.6rem; }
+.gap-3 { gap: 1rem; }
+.gap-4 { gap: 1.5rem; }
+.gap-6 { gap: 2.5rem; }
+.gap-8 { gap: 4rem; }
+
+/* ============================================================ hero */
+
+.hero {
+  padding: clamp(2.5rem, 6vw, 4.5rem) 0 clamp(2rem, 4vw, 3rem);
+}
+
+.hero-grid {
+  display: grid;
+  gap: clamp(1.75rem, 3.5vw, 3rem);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+@media (min-width: 62rem) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  }
+}
+
+/* Provenance chips: what hardware/model/corpus produced the number, named
+   on the page rather than buried in a doc. */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  background: var(--sub-1);
+  border: 1px solid var(--border);
+  box-shadow: var(--depth-edge);
+  color: var(--fg-muted);
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chip b {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+/* ============================================================ the finding */
+
+/* The distribution strip: 18 clips as 18 real cells, coloured by measured
+   bucket. This is the "7 of 18 were perfect" sentence, drawn. */
+.dist {
+  display: grid;
+  grid-template-columns: repeat(18, minmax(0, 1fr));
+  gap: 3px;
+  margin: 0;
+}
+
+.dist-cell {
+  height: 2.75rem;
+  border-radius: 3px;
+  background: var(--sub-2);
+  box-shadow: var(--depth-edge);
+}
+
+.dist-perfect { background: color-mix(in oklab, var(--ok) 82%, var(--sub-1)); }
+.dist-good { background: color-mix(in oklab, var(--ok) 40%, var(--sub-1)); }
+.dist-moderate { background: color-mix(in oklab, var(--warn-wash) 62%, var(--sub-1)); }
+.dist-bad { background: color-mix(in oklab, var(--bad) 68%, var(--sub-1)); }
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+}
+
+.swatch {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 2px;
+  flex: none;
+  box-shadow: var(--depth-edge);
+}
+
+/* Measured-vs-control bars. Two groups, one axis, no gridline decoration. */
+.bars {
+  display: grid;
+  gap: 1.1rem;
+  margin: 0;
+}
+
+.bar-row {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.bar-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  font-size: 0.82rem;
+}
+
+.bar-track {
+  position: relative;
+  height: 0.65rem;
+  border-radius: 999px;
+  background: var(--sub-2);
+  box-shadow: var(--depth-edge);
+  overflow: hidden;
+}
+
+.bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  transition: width var(--dur-slow) var(--ease-out);
+}
+
+.bar-measured { background: linear-gradient(90deg, var(--accent), var(--signal-glow)); }
+.bar-control { background: color-mix(in oklab, var(--info-glow) 72%, var(--sub-2)); }
+
+/* Mishearing pairs — said vs heard, as a scannable comparison. */
+.pairs {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pair {
+  display: grid;
+  gap: 0.5rem 1rem;
+  grid-template-columns: 4.2rem minmax(0, 1fr);
+  align-items: start;
+  padding: 0.85rem 1rem;
+  background: var(--sub-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-structure);
+  box-shadow: var(--depth-edge), var(--elev-1);
+  transition:
+    box-shadow var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+}
+
+.pair:hover {
+  box-shadow: var(--depth-edge), var(--elev-2);
+  transform: translateY(-2px);
+}
+
+.pair-wer {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  padding-top: 0.08rem;
+}
+
+.pair-perfect .pair-wer { color: var(--ok); }
+.pair-mid .pair-wer { color: var(--warn); }
+.pair-bad .pair-wer { color: var(--bad); }
+
+.pair-lines {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.pair-line {
+  display: grid;
+  grid-template-columns: 3.6rem minmax(0, 1fr);
+  gap: 0.6rem;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.pair-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+}
+
+.pair-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.45;
+}
+
+.pair-said {
+  color: var(--fg);
+  font-family: var(--font-voice);
+  font-size: 1.02rem;
+}
+.pair-heard {
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  letter-spacing: -0.015em;
+}
+.pair-heard mark {
+  background: color-mix(in oklab, var(--warn-wash) 34%, transparent);
+  color: var(--fg);
+  border-radius: 3px;
+  padding: 0.02em 0.22em;
+}
+
+@media (max-width: 30rem) {
+  .pair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pair-line {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.1rem;
+  }
+}
+
+/* ============================================================ stat blocks */
+
+.stats {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  background: var(--sub-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-structure);
+  overflow: hidden;
+  box-shadow: var(--depth-edge), var(--elev-1);
+}
+
+/* Known-count variants. auto-fit leaves a visibly empty cell whenever the
+   last row is short (a 4-stat block in a narrow panel resolves to 3 columns
+   and orphans the fourth), which reads as a missing tile rather than as a
+   layout. Where the count is known, state it. */
+.stats-quad {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 30rem) {
+  .stats-quad {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.stats-trio {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 30rem) {
+  .stats-trio {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.stat {
+  background: var(--sub-1);
+  outline: 1px solid var(--border);
+  padding: 0.95rem 1rem;
+  display: grid;
+  gap: 0.15rem;
+  align-content: start;
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.5rem, 3.2vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  line-height: 1.35;
+}
+
+/* ============================================================ tool */
+
+.tool {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  gap: 1rem;
+  padding: clamp(1rem, 2.5vw, 1.35rem);
+  background: var(--sub-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-structure);
+  box-shadow: var(--depth-edge), var(--elev-2);
+}
+
+.tool-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.tool-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  min-width: 0;
+}
+
+.sample-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sample-tab {
+  font: inherit;
+  font-size: 0.8rem;
+  min-height: 44px;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border);
+  background: var(--sub-2);
+  color: var(--fg-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.sample-tab:hover {
+  color: var(--fg);
+  border-color: var(--border-strong);
+}
+
+.sample-tab[aria-pressed="true"] {
+  background: var(--sub-1);
+  color: var(--fg);
+  border-color: var(--accent);
+  box-shadow: var(--depth-edge), var(--elev-1);
+}
+
+.tab-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  flex: none;
+}
+
+.dot-none { background: var(--ok); }
+.dot-A { background: var(--warn-wash); }
+.dot-B { background: var(--accent); }
+
+/* The transcript surface. */
+.transcript {
+  font-family: var(--font-voice);
+  font-size: clamp(1.1rem, 2.1vw, 1.3rem);
+  line-height: 1.6;
+  padding: 1rem 1.1rem;
+  background: var(--sub-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.confidence-viz {
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+  font-size: clamp(0.98rem, 1.9vw, 1.1rem);
+  line-height: 1.95;
+  padding: 1rem 1.1rem;
+  background: var(--sub-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.conf-word {
+  border-radius: 3px;
+  padding: 0.06em 0.18em;
+}
+
+.conf-medium { background: color-mix(in oklab, var(--warn-wash) 24%, transparent); }
+.conf-low { background: color-mix(in oklab, var(--warn-wash) 48%, transparent); }
+
+/* Dropzone: a real surface, not a dashed placeholder. */
+.dropzone {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--sub-2);
+  padding: 1rem 1.1rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  gap: 0.6rem;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.dropzone-active {
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 8%, var(--sub-2));
+}
+
+.dropzone label {
+  display: block;
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+}
+
+.dropzone input[type="file"] {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--fg-muted);
+}
+
+.dropzone input[type="file"]::file-selector-button {
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  margin-right: 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--sub-1);
+  color: var(--fg);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.dropzone input[type="file"]::file-selector-button:hover {
+  border-color: var(--accent);
+  background: var(--sub-2);
+}
+
+.dropzone input[type="file"]:disabled::file-selector-button {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Status + errors read as sentences on a surface — no coloured rail down
+   one side, which is the single most recognisable generated-UI tell. */
+.status-note {
+  font-size: 0.875rem;
+  color: var(--fg-muted);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-note:empty {
+  display: none;
+}
+
+.error-note {
+  color: var(--bad);
+  background: color-mix(in oklab, var(--bad) 9%, var(--sub-1));
+  border: 1px solid color-mix(in oklab, var(--bad) 32%, transparent);
+  border-radius: var(--radius-control);
+  padding: 0.6rem 0.85rem;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.mic-button-recording {
+  background: var(--bad);
+  border-color: var(--bad);
+  color: var(--accent-fg);
+}
+
+/* Progress: the model download is a real wait, so it gets a real meter. */
+.meter {
+  height: 0.3rem;
+  border-radius: 999px;
+  background: var(--sub-2);
+  overflow: hidden;
+  box-shadow: var(--depth-edge);
+  min-width: 6rem;
+  flex: 1;
+  max-width: 14rem;
+}
+
+.meter-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--signal-glow));
+  transition: width var(--dur-fast) linear;
+}
+
+/* Model readback. */
+.model-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: var(--sub-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  overflow: hidden;
+}
+
+.model-panel > div {
+  background: var(--sub-1);
+  outline: 1px solid var(--border);
+  padding: 0.6rem 0.75rem;
+}
+
+.model-panel dt {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--fg-faint);
+  margin: 0;
+}
+
+.model-panel dd {
+  margin: 0.2rem 0 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+/* ============================================================ diff */
+
+.diff-view {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.diff-view label {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.diff-view textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9375rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border);
+  background: var(--sub-2);
+  color: var(--fg);
+  resize: vertical;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.diff-view textarea:focus {
+  border-color: var(--accent);
+}
+
+.diff-result {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.diff-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.diff-chip {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+}
+
+.diff-tokens {
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+  font-size: 0.98rem;
+  line-height: 1.85;
+  margin: 0;
+  padding: 0.9rem 1rem;
+  background: var(--sub-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  overflow-wrap: anywhere;
+}
+
+.diff-tok {
+  border-radius: 3px;
+  padding: 0.05em 0.2em;
+}
+
+.diff-match,
+.diff-chip.diff-match { background: color-mix(in oklab, var(--ok-wash) 22%, transparent); }
+.diff-sub,
+.diff-chip.diff-sub { background: color-mix(in oklab, var(--warn-wash) 34%, transparent); }
+.diff-del,
+.diff-chip.diff-del {
+  background: color-mix(in oklab, var(--fg) 13%, transparent);
+  text-decoration: line-through;
+}
+.diff-ins,
+.diff-chip.diff-ins { background: color-mix(in oklab, var(--ins) 26%, transparent); }
+
+/* ============================================================ sections */
+
+.section {
+  padding-top: clamp(2.25rem, 4.5vw, 3.5rem);
+}
+
+.section-head {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  max-width: 60ch;
+}
+
+.rule {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+.grid-2 {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 52rem) {
+  .grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.card {
+  padding: 1.15rem 1.25rem;
+  background: var(--sub-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-structure);
+  box-shadow: var(--depth-edge), var(--elev-1);
+  display: grid;
+  gap: 0.55rem;
+  align-content: start;
+  transition:
+    box-shadow var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+}
+
+.card:hover {
+  box-shadow: var(--depth-edge), var(--elev-2);
+  transform: translateY(-2px);
+}
+
+.card-tag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* Prose behind disclosure — the long argument stays available, folded. */
+.disclosure {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-structure);
+  background: var(--sub-1);
+  box-shadow: var(--depth-edge);
+  overflow: hidden;
+}
+
+.disclosure + .disclosure {
+  margin-top: 0.6rem;
+}
+
+.disclosure > summary {
+  cursor: pointer;
+  padding: 0.85rem 1.1rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  list-style: none;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure > summary:hover {
+  background: var(--sub-2);
+}
+
+.disclosure > summary::after {
+  content: "+";
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  color: var(--fg-faint);
+  flex: none;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.disclosure[open] > summary::after {
+  transform: rotate(45deg);
+}
+
+.disclosure-body {
+  padding: 0 1.1rem 1.1rem;
+}
+
+/* Data tables, when a table genuinely is the right shape. */
 .table-wrap {
   overflow-x: auto;
-  margin: 1rem 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-structure);
+  background: var(--sub-1);
+  box-shadow: var(--depth-edge), var(--elev-1);
 }
 
 .table-wrap table {
   border-collapse: collapse;
   width: 100%;
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
 }
 
 .table-wrap th,
 .table-wrap td {
   text-align: left;
-  padding: 0.5rem 0.75rem;
+  padding: 0.6rem 0.85rem;
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
 
+.table-wrap tbody tr:last-child th,
+.table-wrap tbody tr:last-child td {
+  border-bottom: 0;
+}
+
 .table-wrap th {
   font-weight: 600;
+  color: var(--fg-faint);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.table-wrap td.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.table-wrap tbody tr {
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.table-wrap tbody tr:hover {
+  background: var(--sub-2);
+}
+
+/* Reference cards. */
+.card-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 52rem) {
+  .card-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ref-card-sentence {
+  font-family: var(--font-voice);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.ref-card-explanation {
   color: var(--fg-muted);
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.ref-card-citation {
+  font-size: 0.75rem;
+  color: var(--fg-faint);
+  margin: 0;
+}
+
+.ref-card-try {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  color: var(--accent);
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: gap var(--dur-fast) var(--ease-out);
+}
+
+.ref-card-try:hover {
+  text-decoration: underline;
+  gap: 0.55rem;
+}
+
+.class-defs {
+  margin: 0;
 }
 
 .class-defs dt {
   font-weight: 700;
-  margin-top: 1rem;
+  margin-top: 0.9rem;
 }
 
 .class-defs dd {
@@ -200,294 +1400,17 @@ button {
   color: var(--fg-muted);
 }
 
-.status-note {
-  font-size: 0.9375rem;
-  color: var(--fg-muted);
-  border-left: 3px solid var(--border);
-  padding-left: 0.875rem;
-}
+/* ============================================================ footer */
 
-code {
-  font-family: var(--font-mono);
-  background: var(--border);
-  padding: 0.1em 0.35em;
-  border-radius: 0.25em;
-  font-size: 0.9em;
-}
-
-.dropzone {
-  border: 2px dashed var(--border);
-  border-radius: 0.5rem;
-  padding: 2rem 1.25rem;
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.dropzone-active {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-}
-
-.dropzone label {
-  display: block;
-  margin-bottom: 0.75rem;
-  color: var(--fg-muted);
-}
-
-.dropzone input[type="file"] {
-  max-width: 100%;
-  font: inherit;
-  color: var(--fg-muted);
-}
-
-.dropzone input[type="file"]::file-selector-button {
-  font: inherit;
-  font-weight: 600;
-  padding: 0.5rem 1.1rem;
-  margin-right: 0.75rem;
-  border-radius: 999px;
-  border: 1px solid var(--accent);
-  background: var(--accent);
-  color: var(--accent-fg);
-  cursor: pointer;
-}
-
-.dropzone input[type="file"]::file-selector-button:hover {
-  opacity: 0.9;
-}
-
-.dropzone input[type="file"]:disabled::file-selector-button {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.error-note {
-  color: #b3261e;
-  border-left: 3px solid #b3261e;
-  padding-left: 0.875rem;
-  font-size: 0.9375rem;
-  margin: 1rem 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  .error-note {
-    color: #ffb4ab;
-    border-left-color: #ffb4ab;
-  }
-}
-
-.transcript {
-  font-size: 1.125rem;
-  line-height: 1.6;
-  padding: 1rem;
-  background: color-mix(in srgb, var(--fg) 4%, transparent);
-  border-radius: 0.5rem;
-  margin: 1rem 0;
-}
-
-.model-panel {
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-  gap: 0.75rem 1.5rem;
-}
-
-.model-panel dt {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--fg-muted);
-  margin: 0;
-}
-
-.model-panel dd {
-  margin: 0.15rem 0 0;
-  font-family: var(--font-mono);
-  font-size: 0.9375rem;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* Mic control */
-.mic-control {
-  margin-bottom: 1rem;
-}
-
-.mic-button {
-  font: inherit;
-  font-weight: 600;
-  padding: 0.65rem 1.25rem;
-  border-radius: 999px;
-  border: 1px solid var(--accent);
-  background: var(--accent);
-  color: var(--accent-fg);
-  cursor: pointer;
-}
-
-.mic-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.mic-button-recording {
-  background: #b3261e;
-  border-color: #b3261e;
-}
-
-/* Confidence visualization — the model's self-report, never a claim about
-   the speaker (docs/pitman-SPEC.md D1). Amber, not red: uncertainty is not
-   an error. */
-.confidence-viz {
-  font-size: 1.125rem;
-  line-height: 1.9;
-  padding: 1rem;
-  background: color-mix(in srgb, var(--fg) 4%, transparent);
-  border-radius: 0.5rem;
-  margin: 1rem 0;
-}
-
-.conf-word {
-  border-radius: 0.2em;
-  padding: 0.05em 0.15em;
-}
-
-.conf-medium {
-  background: color-mix(in srgb, #c98a1f 22%, transparent);
-}
-
-.conf-low {
-  background: color-mix(in srgb, #c98a1f 45%, transparent);
-}
-
-/* Diff view */
-.diff-view {
-  margin: 1.5rem 0;
-}
-
-.diff-view label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-}
-
-.diff-view textarea {
-  width: 100%;
-  font: inherit;
-  padding: 0.65rem 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--fg);
-  resize: vertical;
-}
-
-.diff-result {
-  margin-top: 1rem;
-}
-
-.diff-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 0 0 0.75rem;
-}
-
-.diff-chip {
-  font-size: 0.8125rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-}
-
-.diff-tokens {
-  font-size: 1.0625rem;
-  line-height: 1.8;
-}
-
-.diff-tok {
-  border-radius: 0.2em;
-  padding: 0.05em 0.2em;
-}
-
-.diff-match,
-.diff-chip.diff-match {
-  background: color-mix(in srgb, #2e7d4f 20%, transparent);
-}
-
-.diff-sub,
-.diff-chip.diff-sub {
-  background: color-mix(in srgb, #c98a1f 30%, transparent);
-}
-
-.diff-del,
-.diff-chip.diff-del {
-  background: color-mix(in srgb, var(--fg) 12%, transparent);
-  text-decoration: line-through;
-}
-
-.diff-ins,
-.diff-chip.diff-ins {
-  background: color-mix(in srgb, #4a86e8 22%, transparent);
-}
-
-/* Reference cards */
-.card-list {
-  list-style: none;
-  margin: 1.5rem 0 0;
-  padding: 0;
-  display: grid;
-  gap: 1.25rem;
-}
-
-.ref-card {
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-}
-
-.ref-card-sentence {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0.75rem 0 0.5rem;
-}
-
-.ref-card-explanation {
-  color: var(--fg-muted);
-  margin: 0 0 0.5rem;
-}
-
-.ref-card-citation {
-  font-size: 0.8125rem;
-  color: var(--fg-muted);
-  margin: 0 0 0.75rem;
-}
-
-.ref-card-try {
-  font-weight: 600;
-  text-decoration: none;
-  color: var(--accent);
-}
-
-.ref-card-try:hover {
-  text-decoration: underline;
-}
-
-/* attribution-kit v1 — the maker's mark, in the shell footer (index.html) */
 .site-footer {
-  max-width: 60rem;
+  max-width: 72rem;
   margin: 3rem auto 0;
-  padding: 1.25rem 1.25rem 2rem;
+  padding: 1.25rem 1.25rem 2.5rem;
   border-top: 1px solid var(--border);
   color: var(--fg-muted);
   font-size: 0.875rem;
 }
+
 .aj-attribution { margin: 0; font: inherit; line-height: 1.5; color: inherit; }
 .aj-attribution__mark { display: inline-block; width: 20px; height: 20px; vertical-align: -0.3em; margin-right: 0.45em; }
 .aj-attribution__mark--full { width: 48px; height: 48px; vertical-align: middle; }
@@ -496,3 +1419,22 @@ code {
 .aj-attribution a:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 .aj-attribution__sep { margin: 0 0.35em; }
 .aj-attribution { --aj-attribution-signal: var(--accent); }
+
+/* ============================================================ motion off */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .rise { animation: none; }
+  .panel-hover:hover,
+  .pair:hover,
+  .card:hover,
+  .btn:hover:not(:disabled) { transform: none; }
+}

@@ -51,6 +51,16 @@ export default tseslint.config(
     },
   },
   {
+    // Playwright-driven harness scripts (screenshots, surface measurement,
+    // clipped-control probe). Their `page.evaluate()` callbacks are browser
+    // code by construction — serialized and run inside the page — so these
+    // files legitimately reference both environments' globals.
+    files: ["scripts/shots.mjs", "scripts/fold.mjs", "scripts/measure-surface.mjs", "scripts/probe-clipped.mjs"],
+    languageOptions: {
+      globals: { ...globals.node, ...globals.browser },
+    },
+  },
+  {
     files: ["**/*.test.ts", "**/*.test.tsx"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",

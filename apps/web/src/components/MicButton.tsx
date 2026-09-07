@@ -24,7 +24,7 @@ export function MicButton({ onRecording, disabled = false }: MicButtonProps) {
     <div className="mic-control">
       <button
         type="button"
-        className={isRecording ? "mic-button mic-button-recording" : "mic-button"}
+        className={isRecording ? "btn mic-button-recording" : "btn"}
         onClick={isRecording ? stop : start}
         disabled={disabled || status === "requesting"}
         aria-pressed={isRecording}

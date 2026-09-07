@@ -31,7 +31,7 @@
       "reference": "Muzzled greyhounds are racing along a dog track.",
       "refWordCount": 8,
       "evidenceClass": "B",
-      "note": "track -> truck: recurring, phonetically-grounded confusion (probe SS6 bucket B), 2 speakers, both models, absent from the probe's US-accent control group.",
+      "note": "track -> truck: recurring, phonetically-grounded confusion (probe §6 bucket B), 2 speakers, both models, absent from the probe's US-accent control group.",
       "probe": {
         "tiny.en": {
           "fp32": { "hypothesis": "My soul preheans are racing along a dog truck.", "wer": 0.5, "substitutions": 3, "deletions": 0, "insertions": 1 },
@@ -49,7 +49,7 @@
       "reference": "The current president is Pavel Cebanu.",
       "refWordCount": 6,
       "evidenceClass": "A",
-      "note": "Cebanu -> Sebano/Cebano: rare-surname OOV miss (probe SS6 bucket A). The probe's control group broke on equally rare non-Filipino names the same way (Vlachos -> Blachel), which is why this class is never framed as accent-related.",
+      "note": "Cebanu -> Sebano/Cebano: rare-surname OOV miss (probe §6 bucket A). The probe's control group broke on equally rare non-Filipino names the same way (Vlachos -> Blachel), which is why this class is never framed as accent-related.",
       "probe": {
         "tiny.en": {
           "fp32": { "hypothesis": "The current president is Pavel Sebano.", "wer": 0.16666666666666666, "substitutions": 1, "deletions": 0, "insertions": 0 },

@@ -37,13 +37,18 @@ Last full run (`CI=true pnpm run ci`, sequential/`workers:1` — see
 
 - **Unit:** 72/72 passed (5 test files — `align`, `normalize`, `wer`, `evidence-classes`, `provider-readback`).
 - **Build:** green.
-- **e2e:** 12/12 passed (~4.3 min), against the `wasm`+`fp32` path GitHub-hosted runners actually get (no GPU —
+- **e2e:** 13/13 passed (~1.7 min local), against the `wasm`+`fp32` path GitHub-hosted runners actually get (no GPU —
   see [D2 finding](docs/DEVIATIONS.md) below).
+- **Surface gate:** 21/21, 0 hard failures, 0 warnings (`node project-gate.mjs --url <preview>`).
 
 ## What's real here, not estimated
 
-- **WER numbers** on `/method` are copied verbatim from `docs/batch2-asr-probe.md`'s own Node.js measurements —
-  never recomputed or rounded differently.
+- **WER numbers** are parsed out of `docs/batch2-asr-probe.md` at BUILD time by `scripts/extract-probe.mjs` and
+  compiled into the bundle — not hand-copied into JSX, and never fetched at runtime (a page that fetches its own
+  evidence can deploy green and render empty). `pnpm run probe:check` fails CI the moment the document and the
+  page disagree. That check immediately earned its keep: the hand-written `/method` page claimed the class-B
+  confusion "recurs in 3 of the 4 clip×model combinations" when the source document says it appears in **all
+  four**, with three of those four converging on the same wrong word.
 - **Per-word confidence** is the model's actual token-level probability, recovered via a teacher-forcing forward
   pass (`apps/web/src/lib/confidence.ts`) — transformers.js's high-level `pipeline()` API has no way to surface
   this (its greedy sampler hardcodes the returned score to 0). Verified against real fixture audio before

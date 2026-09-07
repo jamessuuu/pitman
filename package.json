@@ -16,10 +16,12 @@
     "brand": "node scripts/brand.mjs",
     "dev": "pnpm --filter ./apps/web run dev",
     "build:web": "pnpm --filter ./apps/web run build",
-    "build": "pnpm run brand && pnpm run build:web",
+    "build": "pnpm run probe && pnpm run brand && pnpm run build:web",
     "e2e:smoke": "pnpm --filter ./apps/web run e2e --grep @smoke",
     "e2e:full": "pnpm --filter ./apps/web run e2e",
-    "ci": "pnpm run typecheck && pnpm run lint && pnpm run unit && pnpm run build && pnpm run e2e:full"
+    "ci": "pnpm run typecheck && pnpm run lint && pnpm run unit && pnpm run probe:check && pnpm run build && pnpm run e2e:full",
+    "probe": "node scripts/extract-probe.mjs",
+    "probe:check": "node scripts/extract-probe.mjs --check"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",

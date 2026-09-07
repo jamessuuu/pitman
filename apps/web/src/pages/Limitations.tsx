@@ -1,72 +1,122 @@
-// /docs/limitations — BATCH-2-STANDARDS.md MUST: "an honest limits surface:
-// what this tool cannot know, where the numbers come from, what was NOT
-// measured." docs/pitman-SPEC.md: "Numbers come from an 18-clip probe...
-// small n, stated; q8 differs from fp32; confidence is self-report, not
-// truth; the tool measures the model, not the speaker — restate the
-// framing law verbatim."
+import { Link } from "react-router-dom";
+import { probe } from "../data/probe.generated";
+
+/**
+ * /docs/limitations — BATCH-2-STANDARDS.md MUST: "an honest limits surface:
+ * what this tool cannot know, where the numbers come from, what was NOT
+ * measured."
+ *
+ * Rewritten from six dense paragraphs into the four claims the page is
+ * actually making, each with its number visible. The full argument survives
+ * behind disclosure — cut for scanning, not for content.
+ */
 export function LimitationsPage() {
+  const { dataset } = probe;
+
   return (
-    <section className="page page-wide" aria-labelledby="limitations-heading">
-      <h1 id="limitations-heading">Limitations</h1>
-      <p className="lede">
-        Everything on this page is a real, stated limit of what pitman can tell you — not a disclaimer buried to
-        protect a claim. If a number or a claim elsewhere in this app needs a caveat, it lives here.
-      </p>
+    <div className="page page-narrow stack gap-6">
+      <header className="stack gap-4 section">
+        <p className="eyebrow">limits</p>
+        <h1 className="display">What this cannot tell you</h1>
+        <p className="lede">
+          Real limits, not a disclaimer protecting a claim. If a number anywhere in this app needs a caveat, the
+          caveat is on this page.
+        </p>
+      </header>
 
-      <h2>The framing law, restated</h2>
-      <p>
-        pitman never judges the speaker. Every mismatch is framed as model behavior — &ldquo;the model heard
-        X&rdquo; — and any explanation offered for why traces to exactly one of two evidenced classes: the model
-        doesn&apos;t know a word (general vocabulary gap, not specific to any one speaker group), or a specific
-        confusion documented across multiple speakers. Where neither applies, pitman states the mismatch and stops
-        — it does not invent a cause. See <a href="/method">/method</a> for the full evidence behind both classes.
-      </p>
+      <section className="stats stats-trio" aria-label="Limits at a glance">
+        <div className="stat">
+          <span className="stat-value">n={dataset.clips}</span>
+          <span className="stat-label">clips, {dataset.speakers} speakers — a probe, not a population study</span>
+        </div>
+        <div className="stat">
+          <span className="stat-value">96%</span>
+          <span className="stat-label">confidence the model gave a word it got wrong</span>
+        </div>
+        <div className="stat">
+          <span className="stat-value">0</span>
+          <span className="stat-label">claims made about pronunciation or intelligibility</span>
+        </div>
+      </section>
 
-      <h2>The sample is small</h2>
-      <p>
-        Every number on the <a href="/method">method page</a> comes from an 18-clip probe (12 speakers) and an
-        18-clip control group (18 speakers) — not a population study. A pattern holding across 2 speakers (the
-        probe&apos;s one class-B finding) is real and documented, but it is not proof of a general rule; the probe
-        document says this explicitly and this app inherits that caveat rather than rounding it away.
-      </p>
+      <section className="grid-2" aria-label="The four limits">
+        <article className="card">
+          <p className="card-tag">the framing law</p>
+          <p className="h3">It measures the model, never the speaker</p>
+          <p className="prose">
+            Every mismatch is framed as model behaviour. Any explanation offered traces to exactly one of two
+            evidenced classes; where neither applies, pitman states the mismatch and stops rather than inventing a
+            cause. <Link to="/method">The evidence for both classes</Link>.
+          </p>
+        </article>
 
-      <h2>q8 vs. fp32 — what actually ships to your browser</h2>
-      <p>
-        pitman defaults to the quantized (q8) model, because q8 — not full-precision fp32 — is what a real browser
-        deployment ships. On a device where your browser can use WebGPU, that is exactly what runs. On the wasm
-        fallback path, this build hit a real limitation: the ONNX Runtime build shipped by this browser
-        environment cannot construct a session for the quantized decoder graph at all (a specific, reproduced
-        error, not a guess — see <code>docs/DEVIATIONS.md</code>&apos;s &ldquo;M2 — D2 finding&rdquo;), so wasm
-        loads the larger, full-precision (fp32) model instead. When that happens, the model panel says so
-        directly, every time — it is never silent about which precision actually ran.
-      </p>
-      <p>
-        A second, separate finding: the browser&apos;s own audio decoding (Web Audio API, for both the microphone
-        and file-drop paths) is not byte-identical to the pipeline the probe used to measure its published numbers
-        (ffmpeg-decoded WAV files, transcribed in Node.js). For most clips this makes no visible difference; for at
-        least one of the three committed reference clips, the in-browser transcription measurably diverges from
-        the probe&apos;s own number for that clip. The numbers on the method page are the probe&apos;s Node.js
-        measurement — reported for comparison, never silently substituted for what this app measures live in your
-        browser.
-      </p>
+        <article className="card">
+          <p className="card-tag">sample size</p>
+          <p className="h3">Small, and stated as small</p>
+          <p className="prose">
+            {dataset.clips} clips and {dataset.controlClips} control clips. A pattern holding across two speakers is
+            real and documented; it is not proof of a general rule. The source document says so, and this app
+            inherits the caveat rather than rounding it away.
+          </p>
+        </article>
 
-      <h2>Confidence is the model&apos;s self-report, not ground truth</h2>
-      <p>
-        The per-word confidence you see in Listen mode is a real, computed number — the probability the model
-        itself assigned to the word it produced, recovered from the model&apos;s own logits (see{" "}
-        <code>src/lib/confidence.ts</code>). It is not independently verified against what was actually said, and
-        it is not a measure of how understandable your speech was to a human. A model can be highly confident
-        about a wrong word (this app&apos;s own reference-clip testing found exactly that: a confused
-        &ldquo;truck&rdquo; scored 96% confidence) — confidence measures the model&apos;s certainty, not
-        correctness.
-      </p>
+        <article className="card">
+          <p className="card-tag">confidence</p>
+          <p className="h3">Self-report, not correctness</p>
+          <p className="prose">
+            Per-word confidence is the probability the model assigned to its own output, recovered from its logits.
+            A model can be extremely confident and wrong: this project&apos;s own testing found a mistaken{" "}
+            <code>truck</code> scoring 96%. Confidence measures certainty, not truth.
+          </p>
+        </article>
 
-      <h2>What was not measured</h2>
-      <ul>
-        <li>No claim is made about pronunciation, phonetic correctness, or intelligibility to a human listener.</li>
-        <li>No claim is made about any accent, dialect, or speaker population beyond the two named evidence classes and their stated evidence.</li>
-        <li>The probe covers English only, read from Common Voice&apos;s crowd-sourced prompts — not spontaneous or conversational speech.</li>
-      </ul>
-    </section>
+        <article className="card">
+          <p className="card-tag">precision</p>
+          <p className="h3">Which model actually ran</p>
+          <p className="prose">
+            pitman defaults to the quantized q8 artifact because that is what a browser deployment ships. Where the
+            wasm runtime cannot build a session for the quantized decoder graph, it loads fp32 instead — and the
+            model panel says so, every time. It is never silent about which precision ran.
+          </p>
+        </article>
+      </section>
+
+      <section className="stack gap-3">
+        <details className="disclosure">
+          <summary>Why in-browser numbers can differ from the published ones</summary>
+          <div className="disclosure-body prose">
+            <p>
+              The browser decodes audio through the Web Audio API; the probe decoded ffmpeg-produced WAV files and
+              transcribed them in Node. These are genuinely different pipelines. For most clips it makes no visible
+              difference; for at least one of the three committed reference clips the in-browser result measurably
+              diverges from the probe&apos;s number for that clip.
+            </p>
+            <p>
+              The method page reports the probe&apos;s Node measurement, for comparison — never silently substituted
+              for what the app measures live in your browser. That distinction is asserted by the e2e suite, not just
+              described here.
+            </p>
+          </div>
+        </details>
+
+        <details className="disclosure">
+          <summary>What was not measured at all</summary>
+          <div className="disclosure-body prose">
+            <ul>
+              <li>Pronunciation, phonetic correctness, or intelligibility to a human listener.</li>
+              <li>
+                Any accent, dialect, or speaker population beyond the two named evidence classes and their stated
+                evidence.
+              </li>
+              <li>
+                Anything outside English read from Common Voice&apos;s crowd-sourced prompts — no spontaneous or
+                conversational speech.
+              </li>
+              <li>Browser-side latency at scale; the published timings are Node measurements on one machine.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+    </div>
   );
 }

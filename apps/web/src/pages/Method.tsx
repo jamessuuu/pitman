@@ -1,130 +1,241 @@
-// /method — docs/pitman-SPEC.md Surfaces §4: "the probe story: dataset
-// provenance, the control group that broke our own first proxy, per-model
-// numbers." Every number below is copied from docs/batch2-asr-probe.md,
-// not recomputed or rounded differently — that source document is the
-// single source of truth; if the two ever disagree, the source document
-// wins and this page has drifted.
+import { Link } from "react-router-dom";
+import { probe } from "../data/probe.generated";
+import { ProvenanceChips } from "../components/probe/Finding";
+import { ControlComparison } from "../components/probe/ControlComparison";
+
+/**
+ * /method — the full measurement, for the reader who wants the tables.
+ *
+ * Every number is read out of docs/batch2-asr-probe.md at build time by
+ * scripts/extract-probe.mjs. This page used to hand-transcribe them into
+ * JSX, and had already drifted: it claimed the class-B confusion "recurs in
+ * 3 of the 4 clip×model combinations" when the document says it appears in
+ * ALL FOUR and that three of those four converge on the same wrong word.
+ * That is exactly the drift `pnpm run probe:check` now prevents.
+ */
 export function MethodPage() {
+  const { classB, headline, dataset, adjusted, distributions, taxonomy } = probe;
+
   return (
-    <section className="page page-wide" aria-labelledby="method-heading">
-      <h1 id="method-heading">Method</h1>
-      <p className="lede">
-        pitman is built on a real measurement, not a hunch: an 18-clip probe of Filipino-accented English against
-        Whisper tiny.en and base.en, with an 18-clip US-tagged control group run through the identical pipeline on
-        the same day. The full document is committed at{" "}
-        <code>docs/batch2-asr-probe.md</code>; this page summarizes it.
-      </p>
+    <div className="page stack gap-6">
+      <header className="stack gap-4 section">
+        <p className="eyebrow">method · {probe.source}</p>
+        <h1 className="display">The measurement, in full</h1>
+        <p className="lede">
+          An {dataset.clips}-clip probe of Filipino-accented English against Whisper tiny.en and base.en, with a{" "}
+          {dataset.controlClips}-clip US-tagged control group run through the identical pipeline on the same day.
+        </p>
+        <ProvenanceChips />
+      </header>
 
-      <h2>Dataset</h2>
-      <p>
-        18 clips from 12 speakers, drawn from Mozilla Common Voice English v22.0 (via the ungated{" "}
-        <code>fsicoli/common_voice_22_0</code> mirror on Hugging Face), licensed CC0-1.0. Selected from the{" "}
-        <code>test.tsv</code> split by: self-reported accent tag containing &ldquo;Filip&rdquo; as the primary tag,{" "}
-        <code>down_votes == 0</code>, <code>up_votes &gt;= 2</code>, sentence length 4-25 words, and at most 2 clips
-        per speaker. A second, separately-built 18-clip/18-speaker control group used the identical filters against
-        a single-tag &ldquo;United States English&rdquo; accent instead.
-      </p>
+      <section aria-labelledby="dist-heading" className="stack gap-4">
+        <div className="section-head">
+          <h2 id="dist-heading" className="h2">
+            Word error rate by model and precision
+          </h2>
+          <p className="prose">
+            Reported at both precisions because the quantized artifact is the one a browser actually ships. The probe
+            is explicit that its own first pass silently pulled full-precision weights no browser build would use.
+          </p>
+        </div>
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Model</th>
+                <th scope="col">Precision</th>
+                <th scope="col">Mean</th>
+                <th scope="col">Median</th>
+                <th scope="col">Stdev</th>
+                <th scope="col">Min</th>
+                <th scope="col">Max</th>
+              </tr>
+            </thead>
+            <tbody>
+              {distributions.map((d) => (
+                <tr key={`${d.model}-${d.precision}`}>
+                  <td>{d.model}</td>
+                  <td>{d.precision}</td>
+                  <td className="num">{d.mean.toFixed(4)}</td>
+                  <td className="num">{d.median.toFixed(4)}</td>
+                  <td className="num">{d.stdev.toFixed(4)}</td>
+                  <td className="num">{d.min.toFixed(3)}</td>
+                  <td className="num">{d.max.toFixed(3)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      <h2>WER methodology</h2>
-      <p>
-        Word Error Rate = (Substitutions + Deletions + Insertions) / reference word count, from a word-level
-        Levenshtein alignment with full backtrace (ported into <code>packages/core</code> and tested against every
-        known-answer pair below). Normalization: lowercase, strip punctuation except apostrophes, collapse
-        whitespace — matching what pitman&apos;s own WER engine does at runtime, so the numbers below and the
-        numbers this app produces on your own audio are computed the same way.
-      </p>
+        <div className="stats stats-quad">
+          <div className="stat">
+            <span className="stat-value">
+              {headline.perfect}/{headline.total}
+            </span>
+            <span className="stat-label">word-perfect in every one of the four model/precision runs</span>
+          </div>
+          <div className="stat">
+            <span className="stat-value">{headline.perfectPct}%</span>
+            <span className="stat-label">of clips with zero errors</span>
+          </div>
+          <div className="stat">
+            <span className="stat-value">
+              {headline.withError}/{headline.total}
+            </span>
+            <span className="stat-label">contain at least one real error</span>
+          </div>
+          <div className="stat">
+            <span className="stat-value">{dataset.speakers}</span>
+            <span className="stat-label">unique speakers, max two clips each</span>
+          </div>
+        </div>
+      </section>
 
-      <h2>Results — mean WER by model and precision</h2>
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Model</th>
-              <th scope="col">Precision</th>
-              <th scope="col">Filipino-tagged (n=18)</th>
-              <th scope="col">US-tagged control (n=18)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>whisper-tiny.en</td>
-              <td>fp32</td>
-              <td>0.1795</td>
-              <td>0.1258</td>
-            </tr>
-            <tr>
-              <td>whisper-tiny.en</td>
-              <td>q8 (what browsers ship)</td>
-              <td>0.2076</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td>whisper-base.en</td>
-              <td>fp32</td>
-              <td>0.1852</td>
-              <td>0.0840</td>
-            </tr>
-            <tr>
-              <td>whisper-base.en</td>
-              <td>q8 (what browsers ship)</td>
-              <td>0.1574</td>
-              <td>—</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p>
-        The shape that matters more than any single mean: <strong>7 of 18 clips (39%) were transcribed perfectly in
-        every one of the four model/precision combinations</strong>. The remaining clips spread across a real tail
-        out to WER 0.5-1.125, rather than clustering just above zero. That mix — a solid cluster of clean
-        transcriptions plus a genuine tail of real breakage — is what a per-clip confidence and diff tool has
-        something honest to show on.
-      </p>
+      <section aria-labelledby="control-heading2" className="stack gap-4">
+        <div className="section-head">
+          <h2 id="control-heading2" className="h2">
+            Against the control group
+          </h2>
+        </div>
+        <ControlComparison />
+      </section>
 
-      <h2>The two evidence classes</h2>
-      <p>
-        The probe&apos;s error taxonomy splits into exactly two explainable buckets — and pitman never offers a
-        third, invented explanation. When the app flags a mismatch, it only ever cites one of these two, or says
-        plainly that no established pattern applies yet.
-      </p>
-      <dl className="class-defs">
-        <dt>Class A — the model doesn&apos;t know the word</dt>
-        <dd>
-          Rare proper nouns and place names the model has never seen written out, so it guesses wrong for anyone.
-          The control group is what proves this: the identical failure mode, including one identical
-          spelling-pattern (a Greek surname, &ldquo;Vlachos&rdquo; → &ldquo;Blachel&rdquo;), showed up on a
-          nominally native-English speaker misreading an unfamiliar name. A rare word is rare for everyone.
-        </dd>
-        <dt>Class B — documented across multiple speakers</dt>
-        <dd>
-          &ldquo;track&rdquo; → &ldquo;truck&rdquo; is the probe&apos;s one qualifying case: it recurs in 3 of the 4
-          clip×model combinations it appears in, across 2 different Filipino-tagged speakers, in both models, with
-          no counterpart anywhere in the control group. One recurring, evidenced word-pair — not a general claim
-          about a sound.
-        </dd>
-      </dl>
+      <section aria-labelledby="classb-heading" className="stack gap-4">
+        <div className="section-head">
+          <h2 id="classb-heading" className="h2">
+            The one class-B finding
+          </h2>
+        </div>
+        <div className="grid-2">
+          <article className="card">
+            <p className="card-tag">measured</p>
+            <p className="h3">
+              <code>{classB.ref}</code> → <code>{classB.hyp}</code>
+            </p>
+            <p className="prose">
+              Mis-transcribed in every one of the {classB.combinations} clip×model combinations it appears in, across{" "}
+              {classB.speakers} speakers, in both models. {classB.convergent} of those {classB.combinations} land on
+              the identical wrong word; the fourth lands on <code>trap</code>, which shares the same vowel.
+            </p>
+          </article>
+          <article className="card">
+            <p className="card-tag">not claimed</p>
+            <p className="h3">A population-level finding</p>
+            <p className="prose">
+              One recurring word-pair at n={dataset.clips} is suggestive, not proof of a general phonological effect,
+              and the source document does not claim more than that. Neither does this page.
+            </p>
+          </article>
+        </div>
+      </section>
 
-      <h2>What the control group does and doesn&apos;t prove</h2>
-      <p>
-        A real, consistent gap shows up in every cut of the data: more errors, more error operations, and a
-        strictly higher median WER on the Filipino-tagged set than on the control, in both models. But this is an{" "}
-        <strong>unmatched-groups comparison</strong> — the two groups read different sentences, so some of the gap
-        could be sentence-difficulty variance rather than anything about the speech itself. And the rare-word
-        failure mode (class A) is confirmed present in <em>both</em> groups, not unique to the Filipino set — which
-        is exactly why pitman never attributes a class-A miss to how something was said. The honest reading: some
-        of the gap is generic ASR weakness on uncommon words that would trip up any accent at similar rates, and
-        some residual gap is not explained by that alone — anchored by the one class-B finding that has no
-        control-group counterpart at all.
-      </p>
+      <section aria-labelledby="detail-heading2" className="stack gap-3">
+        <div className="section-head">
+          <h2 id="detail-heading2" className="h2">
+            The rest of the method
+          </h2>
+        </div>
 
-      <h2>Verdict</h2>
-      <p>
-        The probe&apos;s own conclusion — <strong>VIABLE-INTERESTING</strong>, on one binding condition: never
-        present a single per-clip result as attributable to the speaker. This is the framing law pitman is built
-        around, and it is enforced by an automated test
-        (<code>packages/core/test/evidence-classes.test.ts</code>) that fails the build if the word &ldquo;accent&rdquo;
-        — or any other speaker-judging language — ever appears in the app&apos;s own copy.
-      </p>
-    </section>
+        <details className="disclosure">
+          <summary>How word error rate is computed</summary>
+          <div className="disclosure-body prose">
+            <p>
+              WER = (substitutions + deletions + insertions) / reference word count, from a word-level Levenshtein
+              alignment with full backtrace. Normalization: lowercase, strip punctuation except apostrophes, collapse
+              whitespace. That engine lives in <code>packages/core</code> and is the same one scoring your own audio,
+              so the numbers here and the numbers the app produces are computed identically.
+            </p>
+            <p>
+              Whisper&apos;s full <code>EnglishTextNormalizer</code> is deliberately <em>not</em> implemented. That
+              scope cut has a measurable cost — <code>four</code> vs <code>4</code>, and <code>its</code> vs{" "}
+              <code>it&apos;s</code>, both inflate raw WER — so both a raw and an adjusted figure are reported below
+              rather than only the flattering one.
+            </p>
+          </div>
+        </details>
+
+        <details className="disclosure">
+          <summary>Raw vs artifact-adjusted word error rate</summary>
+          <div className="disclosure-body">
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Model / dtype</th>
+                    <th scope="col">Raw mean</th>
+                    <th scope="col">Raw median</th>
+                    <th scope="col">Adjusted mean</th>
+                    <th scope="col">Adjusted median</th>
+                    <th scope="col">Clips affected</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {adjusted.map((a) => (
+                    <tr key={a.label}>
+                      <td>{a.label}</td>
+                      <td className="num">{a.rawMean.toFixed(4)}</td>
+                      <td className="num">{a.rawMedian.toFixed(4)}</td>
+                      <td className="num">{a.adjustedMean.toFixed(4)}</td>
+                      <td className="num">{a.adjustedMedian.toFixed(4)}</td>
+                      <td className="num">{a.clipsAffected}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </details>
+
+        <details className="disclosure">
+          <summary>Error taxonomy, and why it is a spelling proxy</summary>
+          <div className="disclosure-body stack gap-3">
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Category</th>
+                    <th scope="col">tiny.en</th>
+                    <th scope="col">base.en</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {taxonomy.map((t) => (
+                    <tr key={t.category}>
+                      <td style={t.isSub ? { paddingLeft: "2rem", color: "var(--fg-muted)" } : undefined}>
+                        {t.category}
+                      </td>
+                      <td className="num">{t.tiny}</td>
+                      <td className="num">{t.base}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="prose">
+              Classification is done on the <strong>spelling</strong> of substituted words, not on phonetic evidence —
+              no forced alignment, no phonetic recognizer. A tag therefore means &ldquo;this spelling pattern is
+              consistent with X&rdquo;, never &ldquo;X was confirmed&rdquo;. The control group then falsified that
+              proxy on its own terms: it fired on a nominally native-English speaker misreading a Greek surname, which
+              is precisely why no single per-clip result is presented as attributable to the speaker.
+            </p>
+          </div>
+        </details>
+
+        <details className="disclosure">
+          <summary>Verdict, and the condition attached to it</summary>
+          <div className="disclosure-body prose">
+            <p>
+              <strong>{probe.verdict}</strong>, on one binding condition: never present a single per-clip result as
+              attributable to the speaker. That condition is enforced by{" "}
+              <code>packages/core/test/evidence-classes.test.ts</code>, which fails the build if speaker-judging
+              language reaches the app&apos;s copy — a test, not a style guideline.
+            </p>
+            <p>
+              <Link to="/docs/limitations">What this tool cannot tell you</Link>
+            </p>
+          </div>
+        </details>
+      </section>
+    </div>
   );
 }

@@ -34,9 +34,7 @@ export function Dropzone({ onFile, disabled = false }: DropzoneProps) {
         if (!disabled) handleFiles(e.dataTransfer.files);
       }}
     >
-      <label htmlFor={inputId}>
-        Drop a WAV or MP3 here, or choose a file
-      </label>
+      <label htmlFor={inputId}>Drop a WAV or MP3 here, or choose a file — it is decoded and transcribed in this tab.</label>
       <input
         ref={inputRef}
         id={inputId}
