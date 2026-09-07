@@ -1453,6 +1453,25 @@ code {
   gap: 0.55rem;
 }
 
+/* Sized in em so it tracks the link's type, and inherits colour so it needs
+   no per-state rule. */
+.arrow-glyph {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.ref-card-try:hover .arrow-glyph {
+  transform: translateX(2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ref-card-try:hover .arrow-glyph {
+    transform: none;
+  }
+}
+
 .class-defs {
   margin: 0;
 }

@@ -55,14 +55,10 @@ export default tseslint.config(
     // clipped-control probe). Their `page.evaluate()` callbacks are browser
     // code by construction — serialized and run inside the page — so these
     // files legitimately reference both environments' globals.
-    files: [
-      "scripts/shots.mjs",
-      "scripts/fold.mjs",
-      "scripts/shot-section.mjs",
-      "scripts/measure-surface.mjs",
-      "scripts/probe-clipped.mjs",
-      "scripts/probe-overflow.mjs",
-    ],
+    // Globs, not a filename list: this was patched twice while adding probes,
+    // and a lint config that breaks every time a harness script is added is a
+    // config that will eventually be worked around instead of fixed.
+    files: ["scripts/probe-*.mjs", "scripts/shot*.mjs", "scripts/fold.mjs", "scripts/measure-*.mjs"],
     languageOptions: {
       globals: { ...globals.node, ...globals.browser },
     },

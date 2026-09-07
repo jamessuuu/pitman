@@ -52,7 +52,26 @@ export function ReferenceCardsPage() {
             <p className="ref-card-explanation">{card.explanation}</p>
             <p className="ref-card-citation">{card.citation}</p>
             <Link className="ref-card-try" to={`/?meant=${encodeURIComponent(card.sentence)}`}>
-              Try this <span aria-hidden="true">→</span>
+              Try this
+              {/* Decorative affordance, not punctuation: it sits in its own
+                  element, is already aria-hidden, and animates on hover. As a
+                  text glyph it depended on a font whose vendored subset stops
+                  at the Google "latin" range, so U+2192 fell through to
+                  whatever the visitor's system provides. Inline SVG at 1em in
+                  currentColor removes that dependency at no cost — and keeps
+                  it out of copied text, where it never belonged.
+                  The `track -> truck` arrows elsewhere are the opposite case
+                  and stay as text: there the arrow is the relation itself. */}
+              <svg className="arrow-glyph" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <path
+                  d="M2.5 8h10M9 4.5 12.5 8 9 11.5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </Link>
           </li>
         ))}
