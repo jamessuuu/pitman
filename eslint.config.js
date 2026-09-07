@@ -55,7 +55,14 @@ export default tseslint.config(
     // clipped-control probe). Their `page.evaluate()` callbacks are browser
     // code by construction — serialized and run inside the page — so these
     // files legitimately reference both environments' globals.
-    files: ["scripts/shots.mjs", "scripts/fold.mjs", "scripts/measure-surface.mjs", "scripts/probe-clipped.mjs"],
+    files: [
+      "scripts/shots.mjs",
+      "scripts/fold.mjs",
+      "scripts/shot-section.mjs",
+      "scripts/measure-surface.mjs",
+      "scripts/probe-clipped.mjs",
+      "scripts/probe-overflow.mjs",
+    ],
     languageOptions: {
       globals: { ...globals.node, ...globals.browser },
     },

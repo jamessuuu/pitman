@@ -27,6 +27,10 @@ const ROUTES = [
 
 const browser = await chromium.launch();
 const rows = [];
+// A screenshot of a page that threw on boot still looks plausible: the shell
+// renders, the PNG is the right size, and the harness reports success. Listen
+// for the throw, or this tool can certify a broken build.
+const pageErrors = [];
 
 for (const vp of VIEWPORTS) {
   const ctx = await browser.newContext({
@@ -34,6 +38,13 @@ for (const vp of VIEWPORTS) {
     deviceScaleFactor: 1,
   });
   const page = await ctx.newPage();
+  page.on("pageerror", (err) => pageErrors.push(`[${vp.name}] pageerror: ${err.message}`));
+  page.on("console", (msg) => {
+    if (msg.type() === "error") pageErrors.push(`[${vp.name}] console.error: ${msg.text()}`);
+  });
+  page.on("requestfailed", (req) => {
+    pageErrors.push(`[${vp.name}] request failed: ${req.url()} (${req.failure()?.errorText})`);
+  });
   for (const route of ROUTES) {
     await page.goto(BASE + route.path, { waitUntil: "networkidle" });
     await page.waitForTimeout(700);
@@ -61,9 +72,18 @@ for (const vp of VIEWPORTS) {
 
 await browser.close();
 console.table(rows);
+
+let failed = false;
 const bad = rows.filter((r) => r.overflow !== "ok");
 if (bad.length > 0) {
   console.error(`\n${bad.length} viewport/route pair(s) overflow horizontally.`);
-  process.exit(1);
+  failed = true;
 }
+if (pageErrors.length > 0) {
+  console.error(`\n${pageErrors.length} runtime error(s) while capturing — these screenshots are NOT evidence:`);
+  for (const e of pageErrors) console.error(`  ${e}`);
+  failed = true;
+}
+if (failed) process.exit(1);
 console.log("\nAll routes fit their viewport at both real PNG width and scrollWidth.");
+console.log("No pageerror, console.error, or failed request during capture.");

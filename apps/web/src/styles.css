@@ -347,12 +347,18 @@ code {
 
 /* ============================================================ chrome */
 
+/* Opaque, deliberately. A translucent sticky bar needs a backdrop-filter to
+   look like anything but muddy text bleed-through, and backdrop-filter was
+   measured at 60 -> 44.7fps on small elements — not a trade worth making for
+   a header. Solid ground plus a contact shadow reads as a layer without
+   costing a compositing pass. */
 .nav {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: color-mix(in oklab, var(--bg) 88%, transparent);
+  background: var(--bg);
   border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 0 var(--border), 0 6px 20px -12px rgba(58, 44, 28, 0.28);
 }
 
 .nav-inner {
